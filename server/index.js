@@ -3,14 +3,25 @@ const app = express();
 const http = require("http");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
-const io = new Server(server);
+const cors = require("cors");
+
+app.use(cors());
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 app.get("/", (req, res) => {
   res.send("Eyy");
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log(`${socket.id} connected`);
+
+  socket.on("send_message", (data) => {
+    io.emit("receive_message", data);
+  });
 });
 
 server.listen(8080, () => {
