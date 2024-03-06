@@ -18,9 +18,12 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
+  socket.on("join_room", (data) => {
+    socket.join(data);
+  });
 
   socket.on("send_message", (data) => {
-    io.emit("receive_message", data);
+    io.to(data.room).emit("receive_message", data);
   });
 });
 
