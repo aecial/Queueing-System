@@ -1,6 +1,5 @@
-import { io } from "socket.io-client";
+import socket from "../lib/socket";
 import { useEffect, useState } from "react";
-const socket = io.connect("http://localhost:8080");
 const MessageForm = ({ room }) => {
   const [message, setMessage] = useState("");
   const [messageReceived, setMessageReceived] = useState([]);
