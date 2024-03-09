@@ -23,8 +23,16 @@ io.on("connection", (socket) => {
   });
 
   socket.on("send_message", (data) => {
-    console.log(socket.id + data);
     io.to(data.room).emit("receive_message", data);
+  });
+
+  socket.on("create_ticket", (data) => {
+    console.log(`${data.name} - ${data.number}`);
+    io.emit("receive_ticket", data);
+  });
+  socket.on("display_ticket", (data) => {
+    console.log(`${data.name} - ${data.number}`);
+    io.emit("project_ticket", data);
   });
 });
 

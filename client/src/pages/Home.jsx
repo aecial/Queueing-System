@@ -18,6 +18,13 @@ const Home = () => {
           </div>
         );
       })}
+      <hr className="text-white" />
+      <button
+        onClick={() => navigate("/watcher")}
+        className="m-4 border border-white p-1"
+      >
+        Watcher
+      </button>
     </div>
   );
 };
