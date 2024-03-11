@@ -1,0 +1,25 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model department {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(255)
+  tickets tickets[]
+}
+
+model tickets {
+  id           Int        @id @default(autoincrement())
+  name         String     @db.VarChar(255)
+  createdAt    DateTime   @default(now()) @db.Timestamp(0)
+  status       Int        @default(0)
+  departmentId Int
+  department   department @relation(fields: [departmentId], references: [id], map: "Tickets_departmentId_fkey")
+
+  @@index([departmentId], map: "Tickets_departmentId_fkey")
+}

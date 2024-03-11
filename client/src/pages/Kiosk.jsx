@@ -1,17 +1,41 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import socket from "../lib/socket";
 const Kiosk = () => {
   const [name, setName] = useState("");
-  const [number, setNumber] = useState(0);
+  const [department, setDepartment] = useState(1);
+  const [departments, setDepartments] = useState([]);
+  useEffect(() => {
+    async function getDepartments() {
+      const response = await fetch("http://localhost:8080/departments");
+      const departments = await response.json();
+      setDepartments(departments.departments);
+    }
+    getDepartments();
+  }, []);
   const sendTicket = () => {
+    // console.log(department);
     // alert(`${name} - ${number}`);
-    socket.emit("create_ticket", { name, number });
+    socket.emit("create_ticket", { name, department });
     setName("");
-    setNumber(0);
+    setDepartment(1);
   };
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">
       <h1 className="text-4xl text-center">Kiosk</h1>
+      <label htmlFor="number">Department : </label>
+      <select
+        name="department"
+        id="department"
+        className="text-black"
+        value={department}
+        onChange={(e) => setDepartment(Number(e.target.value))}
+      >
+        {departments.map((departmentInfo) => {
+          return (
+            <option value={departmentInfo.id}>{departmentInfo.name}</option>
+          );
+        })}
+      </select>
       <label htmlFor="name">Name : </label>
       <input
         type="text"
@@ -21,15 +45,7 @@ const Kiosk = () => {
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
-      <label htmlFor="number">Number : </label>
-      <input
-        type="number"
-        name="number"
-        id="number"
-        className="text-black"
-        value={number}
-        onChange={(e) => setNumber(e.target.value)}
-      />
+
       <button onClick={sendTicket} className="m-4 border border-white p-1">
         Submit
       </button>

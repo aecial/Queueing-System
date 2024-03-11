@@ -6,6 +6,7 @@ import Room from "./pages/Room";
 import Watcher from "./pages/Watcher";
 import Kiosk from "./pages/Kiosk";
 import Window from "./pages/Window";
+import Test from "./pages/Test";
 function App() {
   return (
     <>
@@ -15,6 +16,7 @@ function App() {
         <Route path="/watcher" element={<Watcher />} />
         <Route path="/window" element={<Window />} />
         <Route path="/kiosk" element={<Kiosk />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </>
   );
