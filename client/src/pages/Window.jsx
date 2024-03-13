@@ -37,6 +37,9 @@ const Window = () => {
     socket.emit("display_ticket", { name, number });
     const btn = (document.getElementById(`${number}`).disabled = true);
   };
+  const removeFromDb = (id) => {
+    socket.emit("remove_ticket", { id });
+  };
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">
       <h1 className="text-4xl text-center">Window</h1>
@@ -71,7 +74,12 @@ const Window = () => {
             >
               DISPLAY
             </button>
-            <button className="m-4 border border-white p-1">DONE</button>
+            <button
+              className="m-4 border border-white p-1"
+              onClick={() => removeFromDb(ticket.id)}
+            >
+              DONE
+            </button>
           </div>
         );
       })}

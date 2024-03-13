@@ -58,6 +58,19 @@ io.on("connection", (socket) => {
     console.log(`${data.name} - ${data.number}`);
     io.emit("project_ticket", data);
   });
+  socket.on("remove_ticket", (information) => {
+    async function removeTicket(id) {
+      const ticket = await prisma.tickets.delete({
+        where: {
+          id: id,
+        },
+      });
+      console.log(ticket);
+    }
+    removeTicket(information.id);
+    console.log(`#${information.id} removed`);
+    io.emit("receive_ticket");
+  });
 });
 
 server.listen(8080, () => {
