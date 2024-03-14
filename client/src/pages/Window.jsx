@@ -5,6 +5,11 @@ import { useEffect, useState } from "react";
 const Window = () => {
   const [ticketReceived, setTicketReceived] = useState([]);
   const [backData, setBackData] = useState([]);
+  async function receiveTicket() {
+    const response = await fetch("http://localhost:8080/tickets");
+    const tickets = await response.json();
+    setBackData(tickets.tickets);
+  }
   useEffect(() => {
     async function receiveTicket() {
       const response = await fetch("http://localhost:8080/tickets");
@@ -35,10 +40,12 @@ const Window = () => {
   }, [backData]);
   const display_ticket = (name, number) => {
     socket.emit("display_ticket", { name, number });
-    const btn = (document.getElementById(`${number}`).disabled = true);
+    const btn = document.getElementById(`${number}`);
+    btn.remove();
   };
   const removeFromDb = (id) => {
     socket.emit("remove_ticket", { id });
+    receiveTicket();
   };
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">
