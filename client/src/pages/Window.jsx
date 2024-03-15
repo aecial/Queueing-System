@@ -5,31 +5,16 @@ import { useEffect, useState } from "react";
 const Window = () => {
   const [ticketReceived, setTicketReceived] = useState([]);
   const [backData, setBackData] = useState([]);
+
   async function receiveTicket() {
     const response = await fetch("http://localhost:8080/tickets");
     const tickets = await response.json();
     setBackData(tickets.tickets);
   }
   useEffect(() => {
-    async function receiveTicket() {
-      const response = await fetch("http://localhost:8080/tickets");
-      const tickets = await response.json();
-      setBackData(tickets.tickets);
-    }
     receiveTicket();
   }, []);
   useEffect(() => {
-    // function receiveTicket(number, name) {
-    //   setTicketReceived((current) => [{ number, name }, ...current]);
-    // }
-    async function receiveTicket() {
-      const response = await fetch("http://localhost:8080/tickets");
-      const tickets = await response.json();
-      setBackData(tickets.tickets);
-    }
-    // socket.on("receive_ticket", (data) => {
-    //   receiveTicket(Number(data.number), String(data.name));
-    // });
     socket.on("receive_ticket", () => {
       receiveTicket();
     });
@@ -42,6 +27,8 @@ const Window = () => {
     socket.emit("display_ticket", { name, number });
     const btn = document.getElementById(`${number}`);
     btn.remove();
+    const done = document.getElementById(`${number}btn`);
+    done.classList.remove("hidden");
   };
   const removeFromDb = (id) => {
     socket.emit("remove_ticket", { id });
@@ -82,7 +69,8 @@ const Window = () => {
               DISPLAY
             </button>
             <button
-              className="m-4 border border-white p-1"
+              className="m-4 border border-white p-1 hidden"
+              id={ticket.id + "btn"}
               onClick={() => removeFromDb(ticket.id)}
             >
               DONE
