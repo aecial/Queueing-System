@@ -1,16 +1,19 @@
 import React from "react";
 import socket from "../lib/socket";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Window = () => {
+  const { department } = useParams();
   const [ticketReceived, setTicketReceived] = useState([]);
   const [backData, setBackData] = useState([]);
 
   async function receiveTicket() {
-    const response = await fetch("http://localhost:8080/tickets");
+    const response = await fetch(`http://localhost:8080/tickets/${department}`);
     const tickets = await response.json();
     setBackData(tickets.tickets);
   }
+
   useEffect(() => {
     receiveTicket();
   }, []);
@@ -24,7 +27,8 @@ const Window = () => {
     };
   }, [backData]);
   const display_ticket = (name, number) => {
-    socket.emit("display_ticket", { name, number });
+    console.log(department ? department : "nom");
+    socket.emit("display_ticket", { name, number, department });
     const btn = document.getElementById(`${number}`);
     btn.remove();
     const done = document.getElementById(`${number}btn`);

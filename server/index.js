@@ -17,11 +17,26 @@ app.get("/", (req, res) => {
 });
 app.get("/tickets", async (req, res) => {
   const tickets = await prisma.tickets.findMany({
-    orderBy: {
-      id: "desc",
-    },
+    // orderBy: {
+    //   id: "desc",
+    // },
     include: {
       department: true,
+    },
+  });
+  res.json({ tickets });
+});
+app.get("/tickets/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const tickets = await prisma.tickets.findMany({
+    // orderBy: {
+    //   id: "desc",
+    // },
+    include: {
+      department: true,
+    },
+    where: {
+      departmentId: id,
     },
   });
   res.json({ tickets });
@@ -55,8 +70,8 @@ io.on("connection", (socket) => {
     io.emit("receive_ticket");
   });
   socket.on("display_ticket", (data) => {
-    console.log(`${data.name} - ${data.number}`);
-    io.emit("project_ticket", data);
+    console.log(`${data.name} - ${data.number} - ${data.department}`);
+    socket.to(data.department).emit("project_ticket", data);
   });
   socket.on("remove_ticket", (information) => {
     async function removeTicket(id) {
