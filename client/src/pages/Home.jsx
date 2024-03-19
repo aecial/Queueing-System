@@ -13,19 +13,6 @@ const Home = () => {
   }, []);
   return (
     <div className="bg-gray-800 text-white min-h-screen">
-      {/* {rooms.map((room) => {
-        return (
-          <div className="border border-white p-2">
-            <h3>Room {room}</h3>
-            <button
-              onClick={() => navigate("/room", { state: { room } })}
-              className="m-4 border border-white p-1"
-            >
-              Join Room {room}
-            </button>
-          </div>
-        );
-      })} */}
       {departments.map((department) => {
         return (
           <div className="border border-white p-2">

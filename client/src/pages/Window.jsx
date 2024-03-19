@@ -41,24 +41,6 @@ const Window = () => {
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">
       <h1 className="text-4xl text-center">Window</h1>
-
-      {/* {ticketReceived.map((ticket) => {
-        return (
-          <div className="flex gap-2 items-center" key={ticket.number}>
-            <p>
-              {ticket.number} - {ticket.name}
-            </p>
-            <button
-              id={ticket.number}
-              className="m-4 border border-white p-1 disabled:bg-white"
-              onClick={() => display_ticket(ticket.name, ticket.number)}
-            >
-              DISPLAY
-            </button>
-            <button className="m-4 border border-white p-1">DONE</button>
-          </div>
-        );
-      })} */}
       {backData.map((ticket) => {
         return (
           <div className="flex gap-2 items-center" key={ticket.id}>
