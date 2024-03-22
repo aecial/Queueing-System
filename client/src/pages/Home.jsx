@@ -28,10 +28,10 @@ const Home = () => {
       })}
       <hr className="text-white" />
       <button
-        onClick={() => navigate("/watcher")}
+        onClick={() => navigate("/kiosk")}
         className="m-4 border border-white p-1"
       >
-        Watcher
+        Kiosk
       </button>
     </div>
   );
