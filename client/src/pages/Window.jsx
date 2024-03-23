@@ -7,7 +7,15 @@ const Window = () => {
   const { department } = useParams();
   const [ticketReceived, setTicketReceived] = useState([]);
   const [backData, setBackData] = useState([]);
-
+  const [departments, setDepartments] = useState([]);
+  async function getDepartments() {
+    const response = await fetch(`http://localhost:8080/departments`);
+    const departments = await response.json();
+    setDepartments(departments.departments);
+  }
+  useEffect(() => {
+    getDepartments();
+  }, []);
   async function receiveTicket() {
     const response = await fetch(`http://localhost:8080/tickets/${department}`);
     const tickets = await response.json();
@@ -40,7 +48,14 @@ const Window = () => {
   };
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">
-      <h1 className="text-4xl text-center">Window</h1>
+      <h1 className="text-4xl text-center">
+        {departments.map((item) => {
+          if (item.id == department) {
+            return <p>{item.name}</p>;
+          }
+        })}
+        Window
+      </h1>
       {backData.map((ticket) => {
         return (
           <div className="flex gap-2 items-center" key={ticket.id}>

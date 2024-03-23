@@ -26,6 +26,21 @@ const Home = () => {
           </div>
         );
       })}
+      <hr />
+      {departments.map((department) => {
+        return (
+          <div className="border border-white p-2">
+            <h3>{department.name}</h3>
+            <button
+              onClick={() => navigate(`/window/${department.id}`)}
+              className="m-4 border border-white p-1"
+            >
+              {department.name} Window
+            </button>
+          </div>
+        );
+      })}
+      <hr />
       <hr className="text-white" />
       <button
         onClick={() => navigate("/kiosk")}
