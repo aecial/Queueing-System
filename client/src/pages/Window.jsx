@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 
 const Window = () => {
   const { department } = useParams();
-  const [ticketReceived, setTicketReceived] = useState([]);
   const [backData, setBackData] = useState([]);
   const [departments, setDepartments] = useState([]);
   async function getDepartments() {
@@ -30,12 +29,10 @@ const Window = () => {
       receiveTicket();
     });
     return () => {
-      //   socket.off("receive_ticket", receiveTicket);
       socket.removeAllListeners("receive_ticket");
     };
   }, [backData]);
   const display_ticket = (name, number) => {
-    console.log(department ? department : "nom");
     socket.emit("display_ticket", { name, number, department });
     const btn = document.getElementById(`${number}`);
     btn.remove();
