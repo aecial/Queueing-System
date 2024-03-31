@@ -41,6 +41,23 @@ app.get("/tickets/:id", async (req, res) => {
   });
   res.json({ tickets });
 });
+// TESTING
+app.get("/test/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const tickets = await prisma.tickets.findMany({
+    // orderBy: {
+    //   id: "desc",
+    // },
+    include: {
+      department: true,
+    },
+    where: {
+      departmentId: id,
+    },
+  });
+  res.json({ tickets });
+});
+// TESTING
 app.get("/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });

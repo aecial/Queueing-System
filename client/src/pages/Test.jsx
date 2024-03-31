@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const Test = () => {
   const socket = io.connect("http://localhost:8080");
   const [now, setNow] = useState({});
   const [testItems, setTestItems] = useState([
-    { id: 1, name: "Ted" },
-    { id: 2, name: "Mau" },
-    { id: 3, name: "Tiny" },
+    // { id: 1, name: "Ted" },
+    // { id: 2, name: "Mau" },
+    // { id: 3, name: "Tiny" },
   ]);
+  async function receiveTicket() {
+    const response = await fetch(`http://localhost:8080/tickets/1`);
+    const tickets = await response.json();
+    setTestItems(tickets.tickets);
+  }
+  useEffect(() => {
+    receiveTicket();
+  }, []);
   const handleClick = () => {
     if (testItems.length === 0) {
       setNow({});
     } else {
       setNow(testItems[0]);
+      console.log(testItems[0].id);
+      socket.emit("remove_ticket", { id: testItems[0].id });
       setTestItems((prevItems) => prevItems.slice(1));
     }
   };
