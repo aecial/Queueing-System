@@ -9,6 +9,12 @@ const Test = () => {
     // { id: 2, name: "Mau" },
     // { id: 3, name: "Tiny" },
   ]);
+  function joinRoom() {
+    socket.emit("join_room", "1");
+  }
+  useEffect(() => {
+    joinRoom();
+  }, []);
   async function receiveTicket() {
     const response = await fetch(`http://localhost:8080/tickets/1`);
     const tickets = await response.json();
@@ -17,13 +23,26 @@ const Test = () => {
   useEffect(() => {
     receiveTicket();
   }, []);
+  useEffect(() => {
+    socket.on("receive_ticket", () => {
+      receiveTicket();
+    });
+    return () => {
+      socket.removeAllListeners("receive_ticket");
+    };
+  }, []);
   const handleClick = () => {
     if (testItems.length === 0) {
       setNow({});
     } else {
       setNow(testItems[0]);
+      socket.emit("display_ticket", {
+        name: testItems[0].name,
+        number: testItems[0].id,
+        department: 1,
+      });
       console.log(testItems[0].id);
-      socket.emit("remove_ticket", { id: testItems[0].id });
+      // socket.emit("remove_ticket", { id: testItems[0].id });
       setTestItems((prevItems) => prevItems.slice(1));
     }
   };
