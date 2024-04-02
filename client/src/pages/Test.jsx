@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-
+import { useParams } from "react-router-dom";
 const Test = () => {
   const socket = io.connect("http://localhost:8080");
   const [now, setNow] = useState({});
@@ -9,8 +9,9 @@ const Test = () => {
     // { id: 2, name: "Mau" },
     // { id: 3, name: "Tiny" },
   ]);
+  const { department } = useParams();
   function joinRoom() {
-    socket.emit("join_room", "1");
+    socket.emit("join_room", department);
   }
   useEffect(() => {
     joinRoom();
@@ -39,8 +40,9 @@ const Test = () => {
       socket.emit("display_ticket", {
         name: testItems[0].name,
         number: testItems[0].id,
-        department: 1,
+        department: "1",
       });
+      console.log("Display Ticket Emitted");
       console.log(testItems[0].id);
       // socket.emit("remove_ticket", { id: testItems[0].id });
       setTestItems((prevItems) => prevItems.slice(1));

@@ -28,9 +28,9 @@ const Watcher = () => {
     socket.on("project_ticket", (data) => {
       projectTicket(Number(data.number), String(data.name));
     });
-    return () => {
-      socket.removeAllListeners("project_ticket");
-    };
+    // return () => {
+    //   socket.removeAllListeners("project_ticket");
+    // };
   }, [name]);
   return (
     <div className="bg-gray-800 text-white min-h-screen p-5">

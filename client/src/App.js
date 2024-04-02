@@ -16,7 +16,7 @@ function App() {
         <Route path="/watcher/:department" element={<Watcher />} />
         <Route path="/window/:department" element={<Window />} />
         <Route path="/kiosk" element={<Kiosk />} />
-        <Route path="/test" element={<Test />} />
+        <Route path="/test/:department" element={<Test />} />
       </Routes>
     </>
   );

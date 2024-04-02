@@ -88,7 +88,7 @@ io.on("connection", (socket) => {
   });
   socket.on("display_ticket", (data) => {
     console.log(`${data.name} - ${data.number} - ${data.department}`);
-    socket.to(String(data.department)).emit("project_ticket", data);
+    socket.to(data.department).emit("project_ticket", data);
   });
   socket.on("remove_ticket", (information) => {
     async function removeTicket(id) {
