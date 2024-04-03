@@ -35,6 +35,11 @@ const Test = () => {
   const handleClick = () => {
     if (testItems.length === 0) {
       setNow({});
+      socket.emit("display_ticket", {
+        name: null,
+        number: null,
+        department: "1",
+      });
     } else {
       setNow(testItems[0]);
       socket.emit("display_ticket", {
@@ -42,9 +47,7 @@ const Test = () => {
         number: testItems[0].id,
         department: "1",
       });
-      console.log("Display Ticket Emitted");
-      console.log(testItems[0].id);
-      // socket.emit("remove_ticket", { id: testItems[0].id });
+      socket.emit("remove_ticket", { id: testItems[0].id });
       setTestItems((prevItems) => prevItems.slice(1));
     }
   };
