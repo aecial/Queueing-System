@@ -40,6 +40,7 @@ const Test = () => {
         number: null,
         department: "1",
       });
+      return socket.removeAllListeners("display_ticket");
     } else {
       setNow(testItems[0]);
       socket.emit("display_ticket", {
@@ -48,7 +49,6 @@ const Test = () => {
         department: "1",
       });
       socket.emit("remove_ticket", { id: testItems[0].id });
-      socket.removeAllListeners("remove_ticket");
       setTestItems((prevItems) => prevItems.slice(1));
     }
   };
