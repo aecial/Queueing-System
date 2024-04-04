@@ -48,12 +48,13 @@ const Test = () => {
         department: "1",
       });
       socket.emit("remove_ticket", { id: testItems[0].id });
+      socket.removeAllListeners("remove_ticket");
       setTestItems((prevItems) => prevItems.slice(1));
     }
   };
   return (
     <div className="bg-gray-800 min-h-screen text-white text-4xl">
-      <div className="h-24">
+      <div className="h-24 hidden">
         NOW SERVING
         {now !== null || {} ? (
           <p>
