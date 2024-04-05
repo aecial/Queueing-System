@@ -15,11 +15,7 @@ const Window = () => {
   useEffect(() => {
     getDepartments();
   }, []);
-  const [testItems, setTestItems] = useState([
-    // { id: 1, name: "Ted" },
-    // { id: 2, name: "Mau" },
-    // { id: 3, name: "Tiny" },
-  ]);
+  const [testItems, setTestItems] = useState([]);
   function joinRoom() {
     socket.emit("join_room", department);
   }
