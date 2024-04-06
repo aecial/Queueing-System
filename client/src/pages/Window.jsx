@@ -68,7 +68,7 @@ const Window = () => {
         })}
         Window
       </h1>
-      <div className="h-24 hidden">
+      <div className="h-24">
         NOW SERVING
         {now !== null || {} ? (
           <p>
