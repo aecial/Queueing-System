@@ -71,11 +71,28 @@ const Test = () => {
           </p>
         );
       })}
-      <button onClick={handleClick} className="border border-white p-1 w-full ">
-        {testItems.length === 0 && Object.keys(now).length === 0
-          ? "No Tickets Yet"
-          : "Next"}
-      </button>
+      {testItems.length === 0 && Object.keys(now).length === 0 ? (
+        <button
+          onClick={handleClick}
+          className="border border-white p-1 w-full disabled:bg-red-600 "
+          disabled
+        >
+          No Tickets Yet
+        </button>
+      ) : (
+        <button
+          onClick={handleClick}
+          className="border border-white p-1 w-full "
+        >
+          {Object.keys(now).length === 0
+            ? "Start"
+            : testItems.length === 0 && Object.keys(now).length === 0
+            ? "No Tickets Yet"
+            : testItems.length === 0
+            ? "Done"
+            : "Next"}
+        </button>
+      )}
     </div>
   );
 };
