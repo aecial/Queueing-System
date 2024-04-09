@@ -103,6 +103,19 @@ io.on("connection", (socket) => {
     console.log(`#${information.id} removed`);
     io.emit("receive_ticket");
   });
+  socket.on("add_time", (information) => {
+    async function createTime(time, department) {
+      const service = await prisma.service.create({
+        data: {
+          service_time: Number(time),
+          departmentId: Number(department),
+        },
+      });
+      console.log(service);
+    }
+    createTime(information.time, information.department);
+    console.log(`New Time created`);
+  });
 });
 
 server.listen(8080, () => {

@@ -29,6 +29,7 @@ const Test = () => {
       console.error("Error fetching tickets:", error);
     }
   };
+
   useEffect(() => {
     receiveTicket();
   }, []);
@@ -48,7 +49,10 @@ const Test = () => {
       };
     }
   }, [socket, department]);
-
+  function addTime(time) {
+    console.log(time);
+    socket.emit("add_time", { time, department });
+  }
   const handleClick = () => {
     if (testItems.length === 0) {
       logTime(); // Log time before reset
@@ -98,6 +102,7 @@ const Test = () => {
       return;
     }
     console.log("Elapsed Time:", elapsedTime, "seconds");
+    addTime(elapsedTime);
   };
 
   return (
