@@ -6,7 +6,7 @@ const Kiosk = () => {
   const [departments, setDepartments] = useState([]);
   useEffect(() => {
     async function getDepartments() {
-      const response = await fetch("http://localhost:8080/departments");
+      const response = await fetch("/api/departments");
       const departments = await response.json();
       setDepartments(departments.departments);
     }

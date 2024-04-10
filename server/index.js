@@ -15,7 +15,7 @@ const io = new Server(server, {
 app.get("/", (req, res) => {
   res.send("Eyy");
 });
-app.get("/tickets", async (req, res) => {
+app.get("/api/tickets", async (req, res) => {
   const tickets = await prisma.tickets.findMany({
     // orderBy: {
     //   id: "desc",
@@ -26,7 +26,7 @@ app.get("/tickets", async (req, res) => {
   });
   res.json({ tickets });
 });
-app.get("/tickets/:id", async (req, res) => {
+app.get("/api/tickets/:id", async (req, res) => {
   const id = Number(req.params.id);
   const tickets = await prisma.tickets.findMany({
     // orderBy: {
@@ -42,7 +42,7 @@ app.get("/tickets/:id", async (req, res) => {
   res.json({ tickets });
 });
 // TESTING
-app.get("/test/:id", async (req, res) => {
+app.get("/api/test/:id", async (req, res) => {
   const id = Number(req.params.id);
   const tickets = await prisma.tickets.findMany({
     // orderBy: {
@@ -58,7 +58,7 @@ app.get("/test/:id", async (req, res) => {
   res.json({ tickets });
 });
 // TESTING
-app.get("/departments", async (req, res) => {
+app.get("/api/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });
 });

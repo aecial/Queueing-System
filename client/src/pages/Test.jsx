@@ -22,7 +22,7 @@ const Test = () => {
   }, []);
   const receiveTicket = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/tickets/1`);
+      const response = await fetch(`/api/tickets/1`);
       const tickets = await response.json();
       setTestItems(tickets.tickets);
     } catch (error) {
