@@ -7,6 +7,7 @@ import Watcher from "./pages/Watcher";
 import Kiosk from "./pages/Kiosk";
 import Window from "./pages/Window";
 import Test from "./pages/Test";
+import Report from "./pages/Report";
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
         <Route path="/window/:department" element={<Window />} />
         <Route path="/kiosk" element={<Kiosk />} />
         <Route path="/test/:department" element={<Test />} />
+        <Route path="/report" element={<Report />} />
       </Routes>
     </>
   );
