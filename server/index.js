@@ -5,6 +5,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
 const prisma = require("./lib/PrismaProvider");
+const { count } = require("console");
 app.use(cors());
 const io = new Server(server, {
   cors: {
@@ -40,6 +41,38 @@ app.get("/api/tickets/:id", async (req, res) => {
     },
   });
   res.json({ tickets });
+});
+app.get("/api/report", async (req, res) => {
+  const since = await prisma.service.findFirst();
+  const reportCount = await prisma.service.count();
+  const reportAverage = await prisma.service.aggregate({
+    _avg: {
+      service_time: true,
+    },
+  });
+  res.json({ since, reportCount, reportAverage });
+});
+app.get("/api/report/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const since = await prisma.service.findFirst({
+    where: {
+      departmentId: id,
+    },
+  });
+  const reportCount = await prisma.service.count({
+    where: {
+      departmentId: id,
+    },
+  });
+  const reportAverage = await prisma.service.aggregate({
+    where: {
+      departmentId: id,
+    },
+    _avg: {
+      service_time: true,
+    },
+  });
+  res.json({ since, reportCount, reportAverage });
 });
 // TESTING
 app.get("/api/test/:id", async (req, res) => {
