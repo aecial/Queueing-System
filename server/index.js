@@ -5,7 +5,6 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
 const prisma = require("./lib/PrismaProvider");
-const { count } = require("console");
 app.use(cors());
 const io = new Server(server, {
   cors: {
@@ -74,7 +73,6 @@ app.get("/api/report/:id", async (req, res) => {
   });
   res.json({ since, reportCount, reportAverage });
 });
-// TESTING
 app.get("/api/test/:id", async (req, res) => {
   const id = Number(req.params.id);
   const tickets = await prisma.tickets.findMany({
@@ -90,7 +88,6 @@ app.get("/api/test/:id", async (req, res) => {
   });
   res.json({ tickets });
 });
-// TESTING
 app.get("/api/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });
