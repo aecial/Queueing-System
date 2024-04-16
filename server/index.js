@@ -146,8 +146,17 @@ io.on("connection", (socket) => {
     createTime(information.time, information.department);
     console.log(`New Time created`);
   });
-});
 
+  socket.on("disconnect", () => {
+    console.log(`${socket.id} disconnected`);
+
+    // Remove the disconnected socket from all rooms it joined
+    const rooms = Object.keys(socket.rooms);
+    rooms.forEach((room) => {
+      socket.leave(room);
+    });
+  });
+});
 server.listen(8080, () => {
   console.log("listening on http://localhost:8080");
 });
