@@ -107,13 +107,27 @@ const Window = () => {
 
   return (
     <div className="bg-gray-800 min-h-screen text-white text-4xl">
-      <div className="h-24">
+      <div className="h-auto mb-10">
         NOW SERVING
         {now !== null || {} ? (
-          <p>
-            {now.id} - {now.name}
-          </p>
+          <div className="card w-96 bg-base-100 shadow-xl image-full block mx-auto">
+            <figure>
+              <img
+                src="https://images.pexels.com/photos/7232830/pexels-photo-7232830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                alt="Shoes"
+              />
+            </figure>
+            <div className="card-body text-white">
+              <h2 className="card-title text-red-500">
+                # <span className="underline">{now.id}</span>
+              </h2>
+              <p className="text-center text-white">{now.name}</p>
+            </div>
+          </div>
         ) : (
+          // <p>
+          //   {now.id} - {now.name}
+          // </p>
           <span></span>
         )}
       </div>
@@ -138,7 +152,7 @@ const Window = () => {
             stopTimer();
             handleClick();
           }}
-          className="border border-white p-1 w-full "
+          className="btn btn-primary w-full"
         >
           {Object.keys(now).length === 0
             ? "Start"
