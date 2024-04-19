@@ -38,8 +38,8 @@ const Watcher = () => {
     };
   }, [name]);
   return (
-    <div className="bg-gray-800 text-white min-h-screen p-5">
-      <h1 className="text-4xl text-center">
+    <div className="bg-gray-800 text-white min-h-screen p-5 flex flex-col gap-10 items-center">
+      <h1 className="text-4xl text-center flex gap-4">
         {departments.map((item) => {
           if (item.id == department) {
             return <p>{item.name}</p>;
@@ -48,8 +48,8 @@ const Watcher = () => {
         Watcher
       </h1>
 
-      <h1 className="text-2xl">NOW SERVING :</h1>
-      <p className="text-lg">
+      <h1 className="text-2xl text-center">NOW SERVING :</h1>
+      <p className="text-[150px]">
         {number} - {name}
       </p>
     </div>
