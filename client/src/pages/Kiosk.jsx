@@ -5,6 +5,8 @@ const Kiosk = () => {
   const [department, setDepartment] = useState(0);
   const [alertView, setAlertView] = useState(false);
   const [departments, setDepartments] = useState([]);
+  const [response, setResponse] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
   useEffect(() => {
     async function getDepartments() {
       const response = await fetch("/api/departments");
@@ -12,6 +14,14 @@ const Kiosk = () => {
       setDepartments(departments.departments);
     }
     getDepartments();
+  }, []);
+  useEffect(() => {
+    socket.off("response");
+
+    socket.on("response", function (data) {
+      setResponse(data);
+      setModalOpen(true);
+    });
   }, []);
   const sendTicket = () => {
     // console.log(department);
@@ -22,7 +32,7 @@ const Kiosk = () => {
     } else {
       socket.emit("create_ticket", { name, department });
       setName("");
-      setDepartment(1);
+      setDepartment(0);
     }
   };
   return (
@@ -53,6 +63,36 @@ const Kiosk = () => {
         </div>
       ) : (
         ""
+      )}
+      {response && (
+        <dialog
+          id="my_modal_5"
+          className={
+            "modal " +
+            (modalOpen ? "modal-open" : "modal-close") +
+            " modal-bottom sm:modal-middle"
+          }
+        >
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">
+              You have created a new Ticket!
+            </h3>
+            <h2 className="py-4 mt-4 text-4xl">
+              #{response.id} - {response.name}
+            </h2>
+            <p className="text-red-500">
+              Take a picture or write down your ticket
+            </p>
+            <div className="modal-action">
+              <form method="dialog">
+                {/* if there is a button in form, it will close the modal */}
+                <button className="btn" onClick={() => setModalOpen(false)}>
+                  Close
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
       )}
       <div className="min-w-screen flex flex-col p-20 items-center justify-center gap-3">
         <select

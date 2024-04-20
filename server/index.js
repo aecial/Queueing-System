@@ -111,8 +111,10 @@ io.on("connection", (socket) => {
         },
       });
       console.log(ticket);
+      socket.emit("response", { id: ticket.id, name: ticket.name });
     }
     createTicket(information.name, information.department);
+
     console.log(`New ticket created created`);
     io.emit("receive_ticket");
   });
