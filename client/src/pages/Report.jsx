@@ -1,14 +1,22 @@
 import React, { useEffect, useState } from "react";
+import Loader from "../components/Loader";
 
 const Report = () => {
   const [departments, setDepartments] = useState([]);
   const [reportCount, setReportCount] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [since, setSince] = useState("");
   const [averageServiceTime, setAverageServiceTime] = useState();
   async function getDepartments() {
-    const response = await fetch(`/api/departments`);
-    const departments = await response.json();
-    setDepartments(departments.departments);
+    try {
+      const response = await fetch(`/api/departments`);
+      const departments = await response.json();
+      setDepartments(departments.departments);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    } finally {
+      setIsLoading(false);
+    }
   }
   useEffect(() => {
     getDepartments();
@@ -38,36 +46,41 @@ const Report = () => {
   }
   return (
     <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center">
-      <div>
-        <div class="label">
-          <span class="label-text">Select Department:</span>
-        </div>
-        <select
-          onChange={(e) => handleSelect(e.target.value)}
-          className="select select-primary w-full max-w-xs"
-        >
-          <option value={""} selected>
-            ALL
-          </option>
-          {departments.map((department) => {
-            return <option value={department.id}>{department.name}</option>;
-          })}
-        </select>
-      </div>
-      <div className="stats shadow">
-        <div className="stat place-items-center">
-          <div className="stat-title">Service Count</div>
-          <div className="stat-value">{reportCount}</div>
-          <div className="stat-desc">Since: {since.split("T")[0]}</div>
-        </div>
-
-        <div className="stat place-items-center">
-          <div className="stat-title">Average Service Time</div>
-          <div className="stat-value text-secondary">
-            {averageServiceTime ? averageServiceTime.toFixed(2) + "s" : ""}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <>
+          <div>
+            <div class="label">
+              <span class="label-text">Select Department:</span>
+            </div>
+            <select
+              onChange={(e) => handleSelect(e.target.value)}
+              className="select select-primary w-full max-w-xs"
+            >
+              <option value={""} selected>
+                ALL
+              </option>
+              {departments.map((department) => {
+                return <option value={department.id}>{department.name}</option>;
+              })}
+            </select>
           </div>
-        </div>
-      </div>
+          <div className="stats shadow">
+            <div className="stat place-items-center">
+              <div className="stat-title">Service Count</div>
+              <div className="stat-value">{reportCount}</div>
+              <div className="stat-desc">Since: {since.split("T")[0]}</div>
+            </div>
+            <div className="stat place-items-center">
+              <div className="stat-title">Average Service Time</div>
+              <div className="stat-value text-secondary">
+                {averageServiceTime ? averageServiceTime.toFixed(2) + "s" : ""}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
