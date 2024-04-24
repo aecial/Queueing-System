@@ -1,19 +1,16 @@
 import React from "react";
 
-const AdminCard = ({ title, onClick }) => {
+const AdminCard = ({ title, onClick, src }) => {
   return (
-    <div className="card w-96 bg-base-100 shadow-lg shadow-white">
-      <figure>
-        <img
-          src="https://daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-          alt="Shoes"
-        />
+    <div className="card w-72 bg-base-100 shadow-md shadow-white">
+      <figure className="w-[300px] h-[300px] mx-auto">
+        <img src={"/adminImages/" + src} alt="pic" />
       </figure>
       <div className="card-body">
         <div className="card-actions justify-center">
           <button
             onClick={onClick}
-            className="btn btn-primary text-white text-2xl w-72"
+            className="btn btn-primary text-white text-xl w-48"
           >
             {title}
           </button>
