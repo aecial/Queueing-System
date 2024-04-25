@@ -12,6 +12,7 @@ const io = new Server(server, {
   },
 });
 
+app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Eyy");
 });
@@ -92,6 +93,18 @@ app.get("/api/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });
 });
+
+app.post("/api/addDepartment", async (req, res) => {
+  const { name } = req.body;
+  const department = await prisma.department.create({
+    data: {
+      name: name,
+    },
+  });
+  console.log("ey1");
+  res.json({ message: `Added a new department: ${name}` });
+});
+
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
   socket.on("join_room", (data) => {
