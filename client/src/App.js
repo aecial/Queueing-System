@@ -9,6 +9,7 @@ import Test from "./pages/Test";
 import Report from "./pages/Report";
 import Admin from "./pages/Admin";
 import AddDepartment from "./pages/AddDepartment";
+import Serving from "./pages/Serving";
 function App() {
   return (
     <>
@@ -22,6 +23,7 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/add-department" element={<AddDepartment />} />
+        <Route path="/serving" element={<Serving />} />
       </Routes>
     </>
   );
