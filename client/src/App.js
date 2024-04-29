@@ -9,7 +9,7 @@ import Test from "./pages/Test";
 import Report from "./pages/Report";
 import Admin from "./pages/Admin";
 import AddDepartment from "./pages/AddDepartment";
-import Serving from "./pages/Serving";
+import NowServing from "./pages/NowServing";
 function App() {
   return (
     <>
@@ -23,7 +23,7 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/add-department" element={<AddDepartment />} />
-        <Route path="/serving" element={<Serving />} />
+        <Route path="/now-serving" element={<NowServing />} />
       </Routes>
     </>
   );
