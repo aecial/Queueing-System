@@ -6,8 +6,12 @@ const ServingCard = ({ winNum, ticket }) => {
       <div className="bg-success p-4 w-1/2 border-b-2 border-black">
         Window {winNum}
       </div>{" "}
-      <div className="bg-accent p-4 w-1/2 border-b-2 border-black">
-        {ticket ?? <span className="invisible">0</span>}
+      <div className="bg-accent p-4 w-1/2 border-b-2 border-black text-black">
+        {ticket == null || ticket === undefined || ticket === "" ? (
+          <span className="invisible">0</span>
+        ) : (
+          <span>{ticket}</span>
+        )}
       </div>
     </div>
   );

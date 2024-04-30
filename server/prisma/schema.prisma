@@ -10,6 +10,7 @@ datasource db {
 model department {
   id      Int       @id @default(autoincrement())
   name    String    @db.VarChar(255)
+  now_serving String @db.VarChar(255)
   tickets tickets[]
   service service[]
 }

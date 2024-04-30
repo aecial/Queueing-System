@@ -10,6 +10,7 @@ import Report from "./pages/Report";
 import Admin from "./pages/Admin";
 import AddDepartment from "./pages/AddDepartment";
 import NowServing from "./pages/NowServing";
+import Window2 from "./pages/Window2";
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
         <Route path="/room" element={<Room />} />
         <Route path="/watcher/:department" element={<Watcher />} />
         <Route path="/window/:department" element={<Window />} />
+        <Route path="/window2/:department" element={<Window2 />} />
         <Route path="/kiosk" element={<Kiosk />} />
         <Route path="/test/:department" element={<Test />} />
         <Route path="/report" element={<Report />} />
