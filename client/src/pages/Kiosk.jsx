@@ -29,6 +29,9 @@ const Kiosk = () => {
     if (department === 0 || name === "") {
       console.log("return");
       setAlertView(true);
+      setTimeout(() => {
+        setAlertView(false);
+      }, 5000);
     } else {
       socket.emit("create_ticket", { name, department });
       setName("");
