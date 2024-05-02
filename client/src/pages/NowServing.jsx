@@ -55,7 +55,7 @@ const NowServing = () => {
     <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center">
       <h1 className="text-4xl">NOW SERVING</h1>
       <div className="w-[80%] max-h-screen">
-        <div className="grid grid-cols-2 w-auto border gap-x-0 gap-y-5 text-center">
+        <div className="grid grid-cols-2 w-auto gap-x-1 gap-y-5 text-center">
           <div>
             {firstColumn.map((window) => (
               <ServingCard

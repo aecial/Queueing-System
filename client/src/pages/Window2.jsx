@@ -182,7 +182,7 @@ const Window2 = () => {
                 : "Next"}
             </button>
           )}
-          <p>Elapsed Time: {elapsedTime} seconds</p>
+          <p className="hidden">Elapsed Time: {elapsedTime} seconds</p>
         </div>
       )}
     </div>
