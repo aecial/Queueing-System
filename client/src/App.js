@@ -1,6 +1,5 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
 import Room from "./pages/Room";
 import Watcher from "./pages/Watcher";
 import Kiosk from "./pages/Kiosk";
@@ -16,7 +15,7 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<NowServing />} />
         <Route path="/room" element={<Room />} />
         <Route path="/watcher/:department" element={<Watcher />} />
         <Route path="/window/:department" element={<Window />} />
@@ -27,7 +26,7 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/add-department" element={<AddDepartment />} />
-        <Route path="/now-serving" element={<NowServing />} />
+        {/* <Route path="/now-serving" element={<NowServing />} /> */}
       </Routes>
     </>
   );
