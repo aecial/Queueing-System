@@ -89,11 +89,24 @@ app.get("/api/test/:id", async (req, res) => {
   });
   res.json({ tickets });
 });
+app.get("/api/department/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const dept = await prisma.department.findFirst({
+    where: {
+      id: id,
+    },
+  });
+  res.json({ dept });
+});
 app.get("/api/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });
 });
-
+app.get("/api/department/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const department = await prisma.department.findMany();
+  res.json({ department });
+});
 app.post("/api/addDepartment", async (req, res) => {
   const { name } = req.body;
   const department = await prisma.department.create({

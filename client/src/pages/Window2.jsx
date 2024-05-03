@@ -34,6 +34,21 @@ const Window2 = () => {
       setIsLoading(false);
     }
   };
+  const servingChecker = async () => {
+    try {
+      const response = await fetch(`/api/department/${department}`);
+      const dept = await response.json();
+      if (dept.dept.now_serving) {
+        const rawNowServing = dept.dept.now_serving;
+        const nowServing = rawNowServing.split("-");
+        setNow({ id: nowServing[0].trim(), name: nowServing[1].trim() });
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
   const receiveTicket = async () => {
     try {
       const response = await fetch(`/api/tickets/${department}`);
@@ -43,9 +58,9 @@ const Window2 = () => {
       console.error("Error fetching tickets:", error);
     }
   };
-
   useEffect(() => {
     firstReceiveTicket();
+    servingChecker();
   }, []);
   useEffect(() => {
     if (socket) {
