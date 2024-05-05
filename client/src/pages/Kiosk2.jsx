@@ -67,7 +67,7 @@ const Kiosk2 = () => {
   };
 
   return (
-    <div className="bg-gray-800 text-white min-h-screen p-5">
+    <div className="bg-gray-800 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
       <h1 className="text-4xl text-center">Kiosk</h1>
       {alertView ? (
         <div role="alert" className="alert alert-warning">
@@ -163,7 +163,7 @@ const Kiosk2 = () => {
             readOnly
           />
         </label>
-        <button onClick={sendTicket} className="btn btn-primary w-[20%]">
+        <button onClick={sendTicket} className="btn btn-primary w-full">
           Submit
         </button>
       </div>
