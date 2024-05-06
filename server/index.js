@@ -129,20 +129,24 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create_ticket", (information) => {
-    async function createTicket(name, department) {
-      const ticket = await prisma.tickets.create({
-        data: {
-          name: name,
-          departmentId: department,
-        },
-      });
-      console.log(ticket);
-      socket.emit("response", { id: ticket.id, name: ticket.name });
-    }
-    createTicket(information.name, information.department);
+    try {
+      async function createTicket(name, department) {
+        const ticket = await prisma.tickets.create({
+          data: {
+            name: name,
+            departmentId: department,
+          },
+        });
+        console.log(ticket);
+        socket.emit("response", { id: ticket.id, name: ticket.name });
+      }
+      createTicket(information.name, information.department);
 
-    console.log(`New ticket created created`);
-    io.emit("receive_ticket");
+      console.log(`New ticket created created`);
+      io.emit("receive_ticket");
+    } catch (error) {
+      console.error("Error handling create_ticket", error);
+    }
   });
   socket.on("display_ticket", (data) => {
     console.log(`${data.name} - ${data.number} - ${data.department}`);
@@ -150,6 +154,7 @@ io.on("connection", (socket) => {
   });
   socket.on("display_unified_ticket", (data) => {
     console.log(data);
+    console.log("display unified ticket");
     async function updateTicket(name, id, department) {
       const ticket = await prisma.department.update({
         where: {
@@ -163,6 +168,7 @@ io.on("connection", (socket) => {
       io.emit("refresh");
     }
     updateTicket(data.name, data.number, data.department);
+    console.log("Ticket Updated");
   });
   socket.on("remove_ticket", (information) => {
     async function removeTicket(id) {
@@ -206,14 +212,16 @@ io.on("connection", (socket) => {
     console.log(`New Time created`);
   });
 
-  socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
-
-    // Remove the disconnected socket from all rooms it joined
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      socket.leave(room);
-    });
+  socket.on("disconnect", (error) => {
+    if (error && error.code === "ECONNRESET") {
+      // Handle ECONNRESET error specifically
+      console.error(`${socket.id} disconnected due to ECONNRESET`);
+      // Perform any necessary cleanup or logging
+    } else {
+      // Handle other disconnection errors or scenarios
+      console.error(`${socket.id} disconnected with error:`, error);
+      // Perform appropriate error handling or cleanup
+    }
   });
 });
 server.listen(8080, () => {

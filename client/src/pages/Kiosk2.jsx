@@ -65,6 +65,20 @@ const Kiosk2 = () => {
   const closeModal = () => {
     resetState(); // Reset state on modal close
   };
+  useEffect(() => {
+    const handleSocketError = (error) => {
+      if (error.code === "ECONNRESET") {
+        console.error("Socket connection reset:", error.message);
+      } else {
+        console.error("Socket error:", error.message);
+      }
+    };
+    socket.on("error", handleSocketError);
+
+    return () => {
+      socket.off("error", handleSocketError);
+    };
+  }, []);
 
   return (
     <div className="bg-gray-800 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
@@ -126,7 +140,7 @@ const Kiosk2 = () => {
       )}
       <div className="min-w-screen flex flex-col p-20 items-center justify-center gap-3">
         <select
-          className="select select-primary w-full max-w-xs"
+          className="select select-primary w-full max-w-xs bg-gray-800"
           name="department"
           id="department"
           value={department}
@@ -143,7 +157,7 @@ const Kiosk2 = () => {
         </select>
         <label
           htmlFor="name"
-          className="input input-bordered input-primary flex items-center gap-2 w-full max-w-xs hidden"
+          className="input input-bordered input-primary items-center gap-2 w-full max-w-xs hidden"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

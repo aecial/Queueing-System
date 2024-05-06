@@ -14,7 +14,7 @@ const Window2 = () => {
 
   useEffect(() => {
     // Create a new WebSocket connection when the component mounts
-    const newSocket = io.connect("http://localhost:8080");
+    const newSocket = io.connect("http://192.168.1.19:8080");
     setSocket(newSocket);
 
     // Clean up the WebSocket connection when the component unmounts
@@ -88,8 +88,8 @@ const Window2 = () => {
       setNow({});
       if (socket) {
         socket.emit("display_unified_ticket", {
-          name: null,
-          number: null,
+          name: "",
+          number: "",
           department,
         });
         socket.emit("remove_unified_ticket", { department });
