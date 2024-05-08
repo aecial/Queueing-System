@@ -89,11 +89,24 @@ app.get("/api/test/:id", async (req, res) => {
   });
   res.json({ tickets });
 });
+app.get("/api/department/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const dept = await prisma.department.findFirst({
+    where: {
+      id: id,
+    },
+  });
+  res.json({ dept });
+});
 app.get("/api/departments", async (req, res) => {
   const departments = await prisma.department.findMany();
   res.json({ departments });
 });
-
+app.get("/api/department/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const department = await prisma.department.findMany();
+  res.json({ department });
+});
 app.post("/api/addDepartment", async (req, res) => {
   const { name } = req.body;
   const department = await prisma.department.create({
@@ -116,30 +129,52 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create_ticket", (information) => {
-    async function createTicket(name, department) {
-      const ticket = await prisma.tickets.create({
-        data: {
-          name: name,
-          departmentId: department,
-        },
-      });
-      console.log(ticket);
-      socket.emit("response", { id: ticket.id, name: ticket.name });
-    }
-    createTicket(information.name, information.department);
+    try {
+      async function createTicket(name, department) {
+        const ticket = await prisma.tickets.create({
+          data: {
+            name: name,
+            departmentId: department,
+          },
+        });
+        console.log(ticket);
+        socket.emit("response", { id: ticket.id, name: ticket.name });
+      }
+      createTicket(information.name, information.department);
 
-    console.log(`New ticket created created`);
-    io.emit("receive_ticket");
+      console.log(`New ticket created created`);
+      io.emit("receive_ticket");
+    } catch (error) {
+      console.error("Error handling create_ticket", error);
+    }
   });
   socket.on("display_ticket", (data) => {
     console.log(`${data.name} - ${data.number} - ${data.department}`);
     socket.to(data.department).emit("project_ticket", data);
   });
+  socket.on("display_unified_ticket", (data) => {
+    console.log(data);
+    console.log("display unified ticket");
+    async function updateTicket(name, id, department) {
+      const ticket = await prisma.department.update({
+        where: {
+          id: Number(department),
+        },
+        data: {
+          now_serving: `${id} - ${name}`,
+        },
+      });
+      console.log(ticket);
+      io.emit("refresh");
+    }
+    updateTicket(data.name, data.number, data.department);
+    console.log("Ticket Updated");
+  });
   socket.on("remove_ticket", (information) => {
     async function removeTicket(id) {
       const ticket = await prisma.tickets.delete({
         where: {
-          id: id,
+          id: Number(id),
         },
       });
       console.log(ticket);
@@ -147,6 +182,21 @@ io.on("connection", (socket) => {
     removeTicket(information.id);
     console.log(`#${information.id} removed`);
     io.emit("receive_ticket");
+  });
+  socket.on("remove_unified_ticket", (information) => {
+    async function removeNowServing(department) {
+      const ticket = await prisma.department.update({
+        where: {
+          id: Number(department),
+        },
+        data: {
+          now_serving: "",
+        },
+      });
+      console.log(ticket);
+    }
+    removeNowServing(information.department);
+    io.emit("refresh");
   });
   socket.on("add_time", (information) => {
     async function createTime(time, department) {
@@ -162,14 +212,16 @@ io.on("connection", (socket) => {
     console.log(`New Time created`);
   });
 
-  socket.on("disconnect", () => {
-    console.log(`${socket.id} disconnected`);
-
-    // Remove the disconnected socket from all rooms it joined
-    const rooms = Object.keys(socket.rooms);
-    rooms.forEach((room) => {
-      socket.leave(room);
-    });
+  socket.on("disconnect", (error) => {
+    if (error && error.code === "ECONNRESET") {
+      // Handle ECONNRESET error specifically
+      console.error(`${socket.id} disconnected due to ECONNRESET`);
+      // Perform any necessary cleanup or logging
+    } else {
+      // Handle other disconnection errors or scenarios
+      console.error(`${socket.id} disconnected with error:`, error);
+      // Perform appropriate error handling or cleanup
+    }
   });
 });
 server.listen(8080, () => {
