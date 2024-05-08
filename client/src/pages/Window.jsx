@@ -14,7 +14,7 @@ const Window = () => {
 
   useEffect(() => {
     // Create a new WebSocket connection when the component mounts
-    const newSocket = io.connect("http://localhost:8080");
+    const newSocket = io.connect("http://192.168.1.19:8080");
     setSocket(newSocket);
 
     // Clean up the WebSocket connection when the component unmounts
@@ -34,6 +34,21 @@ const Window = () => {
       setIsLoading(false);
     }
   };
+  const servingChecker = async () => {
+    try {
+      const response = await fetch(`/api/department/${department}`);
+      const dept = await response.json();
+      if (dept.dept.now_serving) {
+        const rawNowServing = dept.dept.now_serving;
+        const nowServing = rawNowServing.split("-");
+        setNow({ id: nowServing[0].trim(), name: nowServing[1].trim() });
+      } else {
+        return;
+      }
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
   const receiveTicket = async () => {
     try {
       const response = await fetch(`/api/tickets/${department}`);
@@ -43,9 +58,9 @@ const Window = () => {
       console.error("Error fetching tickets:", error);
     }
   };
-
   useEffect(() => {
     firstReceiveTicket();
+    servingChecker();
   }, []);
   useEffect(() => {
     if (socket) {
@@ -72,18 +87,19 @@ const Window = () => {
       logTime(); // Log time before reset
       setNow({});
       if (socket) {
-        socket.emit("display_ticket", {
-          name: null,
-          number: null,
+        socket.emit("display_unified_ticket", {
+          name: "",
+          number: "",
           department,
         });
+        socket.emit("remove_unified_ticket", { department });
       }
       setElapsedTime(0);
       return;
     } else {
       setNow(testItems[0]);
       if (socket) {
-        socket.emit("display_ticket", {
+        socket.emit("display_unified_ticket", {
           name: testItems[0].name,
           number: testItems[0].id,
           department,
@@ -181,7 +197,7 @@ const Window = () => {
                 : "Next"}
             </button>
           )}
-          <p>Elapsed Time: {elapsedTime} seconds</p>
+          <p className="hidden">Elapsed Time: {elapsedTime} seconds</p>
         </div>
       )}
     </div>
