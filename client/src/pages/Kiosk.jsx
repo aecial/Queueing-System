@@ -80,8 +80,13 @@ const Kiosk = () => {
   }, []);
 
   return (
-    <div className="bg-gray-800 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
-      <h1 className="text-4xl text-center">Kiosk</h1>
+    <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
+      <div className="avatar flex flex-col gap-10">
+        <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+          <img src="/OIP.jpeg" />
+        </div>
+        <h1 className="text-4xl text-black">LGU-GERONA QUEUING SYSTEM</h1>
+      </div>
       {alertView ? (
         <div role="alert" className="alert alert-warning">
           <svg
@@ -137,9 +142,9 @@ const Kiosk = () => {
           </div>
         </dialog>
       )}
-      <div className="min-w-screen flex flex-col p-20 items-center justify-center gap-3">
+      <div className="w-screen flex flex-col p-20 items-center justify-center gap-3">
         <select
-          className="select select-primary w-full max-w-xs bg-gray-800"
+          className="select select-lg text-3xl select-primary w-full max-w-xs bg-gray-800"
           name="department"
           id="department"
           value={department}
@@ -151,14 +156,14 @@ const Kiosk = () => {
           {departments.map((departmentInfo) => {
             return (
               <option value={departmentInfo.id}>
-                WINDOW {departmentInfo.id}
+                WINDOW {departmentInfo.id} - (DESCRIPTION)
               </option>
             );
           })}
         </select>
         <label
           htmlFor="name"
-          className="input input-bordered input-primary items-center gap-2 w-full max-w-xs hidden"
+          className="input input-lg text-4xl bg-blue-500 input-bordered input-primary items-center gap-5  max-w-xs hidden"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -178,7 +183,7 @@ const Kiosk = () => {
             readOnly
           />
         </label>
-        <button onClick={sendTicket} className="btn btn-primary w-full">
+        <button onClick={sendTicket} className="btn btn-success btn-lg w-[19%]">
           Create Ticket
         </button>
       </div>
