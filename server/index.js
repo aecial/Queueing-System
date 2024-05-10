@@ -138,7 +138,11 @@ io.on("connection", (socket) => {
           },
         });
         console.log(ticket);
-        socket.emit("response", { id: ticket.id, name: ticket.name });
+        socket.emit("response", {
+          id: ticket.id,
+          name: ticket.name,
+          departmentId: ticket.departmentId,
+        });
       }
       createTicket(information.name, information.department);
 

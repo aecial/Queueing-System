@@ -82,8 +82,8 @@ const Kiosk = () => {
   return (
     <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
       <div className="avatar flex flex-col gap-10">
-        <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
-          <img src="/OIP.jpeg" />
+        <div className=" w-44 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+          <img src="/OIP.jpeg" alt="LGU-LOGO" />
         </div>
         <h1 className="text-4xl text-black">LGU-GERONA QUEUING SYSTEM</h1>
       </div>
@@ -122,11 +122,14 @@ const Kiosk = () => {
             " modal-bottom sm:modal-middle"
           }
         >
-          <div className="modal-box">
+          <div className="modal-box bg-slate-100 text-black">
             <h3 className="font-bold text-lg">
               You have created a new Ticket!
             </h3>
-            <h2 className="py-4 mt-4 text-4xl">
+            <h3 className="font-bold text-center mt-10 text-2xl text-red-500">
+              Window {response.departmentId}
+            </h3>
+            <h2 className="py-4 mt-4 text-4xl border-2 border-black text-center bg-">
               #{response.id} - {response.name}
             </h2>
             <p className="text-red-500">
@@ -134,7 +137,10 @@ const Kiosk = () => {
             </p>
             <div className="modal-action">
               <form method="dialog">
-                <button className="btn" onClick={closeModal}>
+                <button
+                  className="btn btn-success text-white"
+                  onClick={closeModal}
+                >
                   Close
                 </button>
               </form>
@@ -142,7 +148,7 @@ const Kiosk = () => {
           </div>
         </dialog>
       )}
-      <div className="w-screen flex flex-col p-20 items-center justify-center gap-3">
+      <div className="w-screen flex flex-col p-10 items-center justify-center gap-3">
         <select
           className="select select-lg text-3xl select-primary w-full max-w-xs bg-gray-800"
           name="department"
@@ -183,7 +189,10 @@ const Kiosk = () => {
             readOnly
           />
         </label>
-        <button onClick={sendTicket} className="btn btn-success btn-lg w-[19%]">
+        <button
+          onClick={sendTicket}
+          className="btn btn-success btn-lg w-[19%] text-white"
+        >
           Create Ticket
         </button>
       </div>
