@@ -82,10 +82,12 @@ const Kiosk = () => {
   return (
     <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
       <div className="avatar flex flex-col gap-10">
-        <div className=" w-44 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+        <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
           <img src="/OIP.jpeg" alt="LGU-LOGO" />
         </div>
-        <h1 className="text-4xl text-black">LGU-GERONA QUEUING SYSTEM</h1>
+        <h1 className="text-4xl text-black font-bold">
+          LGU-GERONA QUEUEING SYSTEM
+        </h1>
       </div>
       {alertView ? (
         <div role="alert" className="alert alert-warning">
@@ -126,6 +128,7 @@ const Kiosk = () => {
             <h3 className="font-bold text-lg">
               You have created a new Ticket!
             </h3>
+            <div className="divider"></div>
             <h3 className="font-bold text-center mt-10 text-2xl text-red-500">
               Window {response.departmentId}
             </h3>

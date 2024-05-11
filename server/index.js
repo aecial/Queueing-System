@@ -112,6 +112,7 @@ app.post("/api/addDepartment", async (req, res) => {
   const department = await prisma.department.create({
     data: {
       name: name,
+      now_serving: "",
     },
   });
   console.log("ey1");
