@@ -165,7 +165,7 @@ const Kiosk = () => {
           {departments.map((departmentInfo) => {
             return (
               <option value={departmentInfo.id}>
-                WINDOW {departmentInfo.id} - (DESCRIPTION)
+                WINDOW {departmentInfo.name} - {departmentInfo.description}
               </option>
             );
           })}

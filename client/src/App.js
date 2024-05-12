@@ -21,7 +21,7 @@ function App() {
         <Route path="/test/:department" element={<Test />} />
         <Route path="/report" element={<Report />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/add-department" element={<AddDepartment />} />
+        <Route path="/add-window" element={<AddDepartment />} />
         {/* <Route path="/now-serving" element={<NowServing />} /> */}
       </Routes>
     </>

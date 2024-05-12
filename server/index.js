@@ -72,6 +72,42 @@ app.get("/api/report/:id", async (req, res) => {
       service_time: true,
     },
   });
+  const months =
+    await prisma.$queryRaw`SELECT DISTINCT MONTH(createdAt) AS month
+  FROM service WHERE departmentId = ${id};`;
+  res.json({ since, reportCount, reportAverage, months });
+});
+app.get("/api/report/:id/:month", async (req, res) => {
+  const id = Number(req.params.id);
+  const month = Number(req.params.month);
+  const since = await prisma.$queryRaw`
+  SELECT *
+  FROM service
+  WHERE departmentId = ${id}
+  AND MONTH(createdAt) = ${month} ORDER BY id ASC LIMIT 1
+`;
+  // Query to count the number of entries for the specified month
+  const reportCount = await prisma.service.count({
+    where: {
+      departmentId: id,
+      createdAt: {
+        gte: new Date(`${new Date().getFullYear()}-${month}-01`),
+        lt: new Date(`${new Date().getFullYear()}-${month + 1}-01`),
+      },
+    },
+  });
+  const reportAverage = await prisma.service.aggregate({
+    where: {
+      departmentId: id,
+      createdAt: {
+        gte: new Date(`${new Date().getFullYear()}-${month}-01`),
+        lt: new Date(`${new Date().getFullYear()}-${month + 1}-01`),
+      },
+    },
+    _avg: {
+      service_time: true,
+    },
+  });
   res.json({ since, reportCount, reportAverage });
 });
 app.get("/api/test/:id", async (req, res) => {
@@ -108,15 +144,17 @@ app.get("/api/department/:id", async (req, res) => {
   res.json({ department });
 });
 app.post("/api/addDepartment", async (req, res) => {
-  const { name } = req.body;
+  const { name, description } = req.body;
   const department = await prisma.department.create({
     data: {
       name: name,
       now_serving: "",
+      description,
     },
   });
-  console.log("ey1");
-  res.json({ message: `Added a new department: ${name}` });
+  res.json({
+    message: `Added a new window: Window ${name} - Service: ${description}`,
+  });
 });
 
 io.on("connection", (socket) => {

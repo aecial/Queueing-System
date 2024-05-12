@@ -7,7 +7,11 @@ const Admin = () => {
   return (
     <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center">
       <div className="grid grid-cols-2 gap-4">
-        <AdminCard title={"Add Department"} src={"addDept.svg"} />
+        <AdminCard
+          title={"Add Window"}
+          src={"addDept.svg"}
+          onClick={() => navigate("/add-window")}
+        />
         <AdminCard
           title={"View Report"}
           onClick={() => navigate("/report")}

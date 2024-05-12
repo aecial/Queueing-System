@@ -11,6 +11,7 @@ model department {
   id      Int       @id @default(autoincrement())
   name    String    @db.VarChar(255)
   now_serving String @db.VarChar(255)
+  description String @db.Text
   tickets tickets[]
   service service[]
 }
