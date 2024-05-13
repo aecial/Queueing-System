@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader";
+import LoginDiv from "../components/LoginDiv";
 
 const Report = () => {
   const [departments, setDepartments] = useState([]);
@@ -90,67 +91,73 @@ const Report = () => {
     ];
     return monthNames[month - 1]; // Adjusting month value to match array index
   }
-  return (
-    <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center text-4xl">
-      {isLoading ? (
-        <Loader />
-      ) : (
-        <>
-          <div>
-            <div className="label">
-              <span className="label-text text-4xl">Select Window:</span>
-            </div>
-            <select
-              onChange={(e) => handleSelect(e.target.value)}
-              className="select select-primary w-full max-w-xs text-lg"
-            >
-              <option value={""} selected>
-                ALL
-              </option>
-              {departments.map((department) => {
-                return (
-                  <option key={department.id} value={department.id}>
-                    Window {department.id}
-                  </option>
-                );
-              })}
-            </select>
-            {isWindowSelected && selectedDept !== "" ? (
+  if (sessionStorage.getItem("token")) {
+    return (
+      <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center text-4xl">
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <div>
+              <div className="label">
+                <span className="label-text text-4xl">Select Window:</span>
+              </div>
               <select
-                onChange={(e) => monthSelect(selectedDept, e.target.value)}
-                className="select select-primary w-full max-w-xs text-lg mt-4"
+                onChange={(e) => handleSelect(e.target.value)}
+                className="select select-primary w-full max-w-xs text-lg"
               >
-                <option value={""} selected disabled>
-                  SELECT MONTH
+                <option value={""} selected>
+                  ALL
                 </option>
-                {months.map((month) => {
-                  const monthName = getMonthName(month);
+                {departments.map((department) => {
                   return (
-                    <option key={month} value={month}>
-                      {monthName}
+                    <option key={department.id} value={department.id}>
+                      Window {department.id}
                     </option>
                   );
                 })}
               </select>
-            ) : null}
-          </div>
-          <div className="stats shadow">
-            <div className="stat place-items-center">
-              <div className="stat-title">Tickets Completed</div>
-              <div className="stat-value">{reportCount}</div>
-              <div className="stat-desc">Since: {since.split("T")[0]}</div>
+              {isWindowSelected && selectedDept !== "" ? (
+                <select
+                  onChange={(e) => monthSelect(selectedDept, e.target.value)}
+                  className="select select-primary w-full max-w-xs text-lg mt-4"
+                >
+                  <option value={""} selected disabled>
+                    SELECT MONTH
+                  </option>
+                  {months.map((month) => {
+                    const monthName = getMonthName(month);
+                    return (
+                      <option key={month} value={month}>
+                        {monthName}
+                      </option>
+                    );
+                  })}
+                </select>
+              ) : null}
             </div>
-            <div className="stat place-items-center">
-              <div className="stat-title">Average Service Time</div>
-              <div className="stat-value text-secondary">
-                {averageServiceTime ? averageServiceTime.toFixed(2) + "s" : ""}
+            <div className="stats shadow">
+              <div className="stat place-items-center">
+                <div className="stat-title">Tickets Completed</div>
+                <div className="stat-value">{reportCount}</div>
+                <div className="stat-desc">Since: {since.split("T")[0]}</div>
+              </div>
+              <div className="stat place-items-center">
+                <div className="stat-title">Average Service Time</div>
+                <div className="stat-value text-secondary">
+                  {averageServiceTime
+                    ? averageServiceTime.toFixed(2) + "s"
+                    : ""}
+                </div>
               </div>
             </div>
-          </div>
-        </>
-      )}
-    </div>
-  );
+          </>
+        )}
+      </div>
+    );
+  } else {
+    return <LoginDiv />;
+  }
 };
 
 export default Report;

@@ -5,6 +5,8 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const cors = require("cors");
 const prisma = require("./lib/PrismaProvider");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 app.use(cors());
 const io = new Server(server, {
   cors: {
@@ -13,8 +15,57 @@ const io = new Server(server, {
 });
 
 app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Eyy");
+});
+app.post("/api/register", async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Generate a salt
+    const salt = await bcrypt.genSalt(10);
+
+    // Hash the password with the salt
+    const hash = await bcrypt.hash(password, salt);
+
+    // Create a new user with the hashed password
+    const newUser = await prisma.user.create({
+      data: {
+        username: username,
+        password: hash,
+      },
+    });
+
+    // Send a single response to the client after user creation
+    res.json({ message: "Added New User" });
+  } catch (error) {
+    console.error("Error registering user:", error);
+    // Send a single error response to the client if an error occurs
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/api/login", async (req, res) => {
+  const { username, password } = req.body;
+  const user = await prisma.user.findFirst({
+    where: {
+      username: username,
+    },
+  });
+
+  if (user) {
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (passwordMatch) {
+      const token = jwt.sign({ userId: user.id }, "1223", {
+        expiresIn: "1h",
+      });
+      res.json({ token });
+    } else {
+      res.sendStatus(403); // Incorrect password
+    }
+  } else {
+    res.sendStatus(403); // User not found
+  }
 });
 app.get("/api/tickets", async (req, res) => {
   const tickets = await prisma.tickets.findMany({

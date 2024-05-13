@@ -34,3 +34,10 @@ model service {
   departmentId Int
   department department @relation(fields: [departmentId], references: [id])
 }
+model user {
+  id Int @id @default(autoincrement())
+  username String @db.VarChar(50)
+  password String @db.VarChar(255)
+  createdAt    DateTime   @default(now()) @db.Timestamp(0)
+  updatedAt    DateTime   @default(now()) @db.Timestamp(0)
+}
