@@ -67,6 +67,24 @@ app.post("/api/login", async (req, res) => {
     res.sendStatus(403); // User not found
   }
 });
+app.post("/api/verifyToken", async (req, res) => {
+  const token = req.body.token; // Assuming the token is sent in the request body
+
+  if (!token) {
+    return res.status(400).json({ error: "Token is missing." });
+  }
+
+  try {
+    // Verify the token
+    const decoded = jwt.verify(token, "1223");
+
+    // Token is valid, you can perform further checks here if needed
+    res.status(200).json({ token });
+  } catch (error) {
+    // Token verification failed
+    res.status(401).json({ error: "Invalid token." });
+  }
+});
 app.get("/api/tickets", async (req, res) => {
   const tickets = await prisma.tickets.findMany({
     // orderBy: {

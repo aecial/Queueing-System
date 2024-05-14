@@ -11,6 +11,7 @@ import AddDepartment from "./pages/AddDepartment";
 import NowServing from "./pages/NowServing";
 import WindowPicker from "./pages/WindowPicker";
 import Login from "./pages/Login";
+import ProtectedRoutes from "./utils/ProtectedRoutes";
 function App() {
   return (
     <>
@@ -23,9 +24,11 @@ function App() {
         <Route path="/window" element={<WindowPicker />} />
         <Route path="/kiosk" element={<Kiosk />} />
         <Route path="/test/:department" element={<Test />} />
-        <Route path="/report" element={<Report />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/add-window" element={<AddDepartment />} />
+        <Route element={<ProtectedRoutes />}>
+          <Route path="/report" element={<Report />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/add-window" element={<AddDepartment />} />
+        </Route>
       </Routes>
     </>
   );
