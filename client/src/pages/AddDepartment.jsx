@@ -15,6 +15,7 @@ const AddDepartment = () => {
               name="name"
               min={1}
               className="input input-bordered w-full max-w-xs text-3xl"
+              required
             />
             <div className="label mt-5">
               <span className="label-text text-4xl">Window Service</span>
@@ -24,6 +25,7 @@ const AddDepartment = () => {
               placeholder="ex. Business Requirements"
               name="description"
               className="input input-bordered w-full max-w-xs text-3xl"
+              required
             />
             <button type="submit" className="btn btn-primary mt-4 w-full">
               Add

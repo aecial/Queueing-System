@@ -12,6 +12,7 @@ import NowServing from "./pages/NowServing";
 import WindowPicker from "./pages/WindowPicker";
 import Login from "./pages/Login";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
+import WindowManager from "./pages/WindowManager";
 function App() {
   return (
     <>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/report" element={<Report />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/add-window" element={<AddDepartment />} />
+          <Route path="/window-manager" element={<WindowManager />} />
         </Route>
       </Routes>
     </>

@@ -12,7 +12,7 @@ model department {
   name    String    @db.VarChar(255)
   now_serving String @db.VarChar(255)
   description String @db.Text
-  tickets tickets[]
+  tickets tickets[] 
   service service[]
 }
 
@@ -22,7 +22,7 @@ model tickets {
   createdAt    DateTime   @default(now()) @db.Timestamp(0)
   status       Int        @default(0)
   departmentId Int
-  department   department @relation(fields: [departmentId], references: [id], map: "Tickets_departmentId_fkey")
+  department   department @relation(fields: [departmentId], references: [id], onDelete: Cascade, map: "Tickets_departmentId_fkey")
 
   @@index([departmentId], map: "Tickets_departmentId_fkey")
 }
@@ -32,7 +32,7 @@ model service {
   createdAt    DateTime   @default(now()) @db.Timestamp(0)
   service_time Float 
   departmentId Int
-  department department @relation(fields: [departmentId], references: [id])
+  department department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
 }
 model user {
   id Int @id @default(autoincrement())

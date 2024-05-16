@@ -225,7 +225,40 @@ app.post("/api/addDepartment", async (req, res) => {
     message: `Added a new window: Window ${name} - Service: ${description}`,
   });
 });
+app.post("/api/editWindow", async (req, res) => {
+  const { id, name, description } = req.body;
+  try {
+    const window = await prisma.department.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        name: name,
+        description: description,
+      },
+    });
+    res.json({
+      message: `Updated Window ${id}: ${name} ${description}`,
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+});
+app.post("/api/deleteWindow", async (req, res) => {
+  const { id } = req.body;
 
+  try {
+    const window = await prisma.department.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    res.json({ message: `Successfully Deleted Window ${id}` });
+  } catch (error) {
+    console.log(error);
+  }
+});
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
   socket.on("join_room", (data) => {
