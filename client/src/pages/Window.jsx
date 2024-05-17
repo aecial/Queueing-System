@@ -11,6 +11,7 @@ const Window = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [timer, setTimer] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [office, setOffice] = useState({});
 
   useEffect(() => {
     // Create a new WebSocket connection when the component mounts
@@ -28,6 +29,12 @@ const Window = () => {
       const response = await fetch(`/api/tickets/${department}`);
       const tickets = await response.json();
       setTestItems(tickets.tickets);
+      const officeResponse = await fetch(`/api/department/${department}`);
+      const resOffice = await officeResponse.json();
+      setOffice({
+        office: resOffice.dept.office.name,
+        window: resOffice.dept.name,
+      });
     } catch (error) {
       console.error("Error fetching tickets:", error);
     } finally {
@@ -142,7 +149,12 @@ const Window = () => {
       ) : (
         <div>
           <div className="h-auto mb-10">
-            NOW SERVING
+            <div className="flex flex-col w-full items-center justify-center mb-7 pt-6">
+              <h1>{office.office} OFFICE</h1>
+              <div className="divider"></div>
+              <h3>Window {office.window}</h3>
+            </div>
+
             {now !== null || {} ? (
               <div className="card w-96 bg-base-100 shadow-xl image-full block mx-auto">
                 <figure>
@@ -164,6 +176,7 @@ const Window = () => {
               // </p>
               <span></span>
             )}
+            <h2 className="text-center"> NOW SERVING</h2>
           </div>
           {testItems.map((item) => {
             return (

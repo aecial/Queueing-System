@@ -200,12 +200,31 @@ app.get("/api/department/:id", async (req, res) => {
     where: {
       id: id,
     },
+    include: {
+      office: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
   res.json({ dept });
 });
 app.get("/api/departments", async (req, res) => {
-  const departments = await prisma.department.findMany();
+  const departments = await prisma.department.findMany({
+    include: {
+      office: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
   res.json({ departments });
+});
+app.get("/api/offices", async (req, res) => {
+  const offices = await prisma.office.findMany();
+  res.json({ offices });
 });
 app.get("/api/department/:id", async (req, res) => {
   const id = Number(req.params.id);
@@ -213,16 +232,17 @@ app.get("/api/department/:id", async (req, res) => {
   res.json({ department });
 });
 app.post("/api/addDepartment", async (req, res) => {
-  const { name, description } = req.body;
+  const { office, name, description } = req.body;
   const department = await prisma.department.create({
     data: {
       name: name,
       now_serving: "",
       description,
+      officeId: Number(office),
     },
   });
   res.json({
-    message: `Added a new window: Window ${name} - Service: ${description}`,
+    message: `Added a new window: Window ${name} - Service: ${description} in ${office}`,
   });
 });
 app.post("/api/editWindow", async (req, res) => {
