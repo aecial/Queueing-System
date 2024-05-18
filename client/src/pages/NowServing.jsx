@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
-import ServingCard from "../components/ServingCard";
+
 import socket from "../lib/socket";
 import Loader from "../components/Loader";
+import OfficeCard from "../components/OfficeCard";
 
 const NowServing = () => {
+  const [offices, setOffices] = useState([]);
   const [windows, setWindows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const getWin = async () => {
-    const response = await fetch(`/api/departments`);
+    const response = await fetch(`/api/offices`);
     const windowApi = await response.json();
-    setWindows(windowApi.departments);
+    setOffices(windowApi.offices);
   };
 
   const firstGetWin = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/departments`);
+      const response = await fetch(`/api/offices`);
       const windowApi = await response.json();
-      setWindows(windowApi.departments);
+      setOffices(windowApi.offices);
+      console.log(offices);
     } catch (error) {
       console.error(error);
     } finally {
@@ -38,9 +41,9 @@ const NowServing = () => {
   }, [getWin]);
 
   // Split to two array, each containing half
-  const halfLength = Math.ceil(windows.length / 2);
-  const firstColumn = windows.slice(0, halfLength);
-  const secondColumn = windows.slice(halfLength);
+  // const halfLength = Math.ceil(windows.length / 2);
+  // const firstColumn = windows.slice(0, halfLength);
+  // const secondColumn = windows.slice(halfLength);
 
   return (
     <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center overflow-hidden">
@@ -48,27 +51,13 @@ const NowServing = () => {
         <Loader />
       ) : (
         <>
-          <h1 className="text-4xl">NOW SERVING</h1>
+          <h1 className="text-4xl ">NOW SERVING</h1>
+          <div className="divider"></div>
           <div className="w-[80%] max-h-screen overflow-hidden">
-            <div className="grid grid-cols-2 w-auto gap-x-1 gap-y-5 text-center">
-              <div>
-                {firstColumn.map((window) => (
-                  <ServingCard
-                    key={window.id}
-                    winNum={window.id}
-                    ticket={window.now_serving}
-                  />
-                ))}
-              </div>
-              <div>
-                {secondColumn.map((window) => (
-                  <ServingCard
-                    key={window.id}
-                    winNum={window.id}
-                    ticket={window.now_serving}
-                  />
-                ))}
-              </div>
+            <div className="grid grid-cols-3 w-auto gap-x-7 gap-y-5 text-center">
+              {offices.map((data) => {
+                return <OfficeCard data={data} />;
+              })}
             </div>
           </div>
         </>

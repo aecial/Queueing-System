@@ -6,12 +6,20 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+model office {
+  id      Int       @id @default(autoincrement())
+  name    String    @db.VarChar(255)
+  department department[]
+  
+}
 
 model department {
   id      Int       @id @default(autoincrement())
   name    String    @db.VarChar(255)
   now_serving String @db.VarChar(255)
   description String @db.Text
+  officeId Int
+  office office @relation(fields: [officeId], references: [id], onDelete: Cascade)
   tickets tickets[] 
   service service[]
 }

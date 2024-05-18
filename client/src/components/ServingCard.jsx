@@ -2,7 +2,7 @@ import React from "react";
 
 const ServingCard = ({ winNum, ticket }) => {
   return (
-    <div className="flex w-full justify-center items-center">
+    <div className="flex w-full justify-center items-center text-3xl">
       <div className="bg-success p-4 w-1/2 border-b-2 border-black">
         Window {winNum}
       </div>{" "}
