@@ -12,6 +12,7 @@ const Window = () => {
   const [timer, setTimer] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [office, setOffice] = useState({});
+  const [offices, setOffices] = useState([]);
 
   useEffect(() => {
     // Create a new WebSocket connection when the component mounts
@@ -23,6 +24,16 @@ const Window = () => {
       newSocket.disconnect();
     };
   }, []);
+  const getOffices = async () => {
+    try {
+      const response = await fetch(`/api/offices`);
+      const windowApi = await response.json();
+      setOffices(windowApi.offices);
+      console.log(offices);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const firstReceiveTicket = async () => {
     setIsLoading(true);
     try {
@@ -33,6 +44,7 @@ const Window = () => {
       const resOffice = await officeResponse.json();
       setOffice({
         office: resOffice.dept.office.name,
+        windowId: resOffice.dept.id,
         window: resOffice.dept.name,
       });
     } catch (error) {
@@ -68,6 +80,7 @@ const Window = () => {
   useEffect(() => {
     firstReceiveTicket();
     servingChecker();
+    getOffices();
   }, []);
   useEffect(() => {
     if (socket) {
@@ -88,6 +101,12 @@ const Window = () => {
   function addTime(time) {
     console.log(time);
     socket.emit("add_time", { time, department });
+  }
+  function transferTicket(winId) {
+    stopTimer();
+    socket.emit("transfer_ticket", { transferId: winId, ticket: now.name });
+    handleClick();
+    document.getElementById("transfer_modal").close();
   }
   const handleClick = () => {
     if (testItems.length === 0) {
@@ -156,19 +175,35 @@ const Window = () => {
             </div>
 
             {now !== null || {} ? (
-              <div className="card w-96 bg-base-100 shadow-xl image-full block mx-auto">
-                <figure>
-                  <img
-                    src="https://images.pexels.com/photos/7232830/pexels-photo-7232830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                    alt="Shoes"
-                  />
-                </figure>
-                <div className="card-body text-white">
-                  <h2 className="card-title text-red-500">
-                    # <span className="underline">{now.id}</span>
-                  </h2>
-                  <p className="text-center text-white">{now.name}</p>
+              <div className="flex justify-center gap-10 items-center ">
+                <div className="card w-96 bg-base-100 shadow-xl image-full block ml-[122px]">
+                  <figure>
+                    <img
+                      src="https://images.pexels.com/photos/7232830/pexels-photo-7232830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+                      alt="Shoes"
+                    />
+                  </figure>
+                  <div className="card-body text-white">
+                    <h2 className="card-title text-red-500">
+                      # <span className="underline">{now.id}</span>
+                    </h2>
+                    <p className="text-center text-white">{now.name}</p>
+                  </div>
                 </div>
+                {Object.keys(now).length !== 0 ? (
+                  <button
+                    className="btn btn-primary"
+                    onClick={() =>
+                      document.getElementById("transfer_modal").showModal()
+                    }
+                  >
+                    Transfer
+                  </button>
+                ) : (
+                  <button className="invisible btn btn-primary">
+                    Transfer
+                  </button>
+                )}
               </div>
             ) : (
               // <p>
@@ -176,6 +211,49 @@ const Window = () => {
               // </p>
               <span></span>
             )}
+            <dialog id="transfer_modal" className="modal">
+              <div className="modal-box">
+                <h3 className="font-bold text-2xl">Transfer Ticket</h3>
+                <div className="divider"></div>
+                <p className="py-4 text-xl">
+                  Which window would you like to transfer the ticket?
+                </p>
+                <div className="flex flex-col">
+                  {offices.map((data) => {
+                    return (
+                      <div key={data.id}>
+                        <h1 className="text-xl text-center">{data.name}</h1>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          {data.department.map((win) => {
+                            {
+                              return win.id === office.windowId ? (
+                                ""
+                              ) : (
+                                <button
+                                  key={win.id}
+                                  className="btn btn-primary"
+                                  onClick={() => transferTicket(win.id)}
+                                >
+                                  {win.name}
+                                </button>
+                              );
+                            }
+                          })}
+                        </div>
+                        <div className="divider"></div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className="modal-action">
+                  <form method="dialog">
+                    {/* if there is a button in form, it will close the modal */}
+                    <button className="btn text-white">Close</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
             <h2 className="text-center"> NOW SERVING</h2>
           </div>
           {testItems.map((item) => {

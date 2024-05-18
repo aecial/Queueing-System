@@ -222,15 +222,29 @@ app.get("/api/departments", async (req, res) => {
   });
   res.json({ departments });
 });
-app.get("/api/offices", async (req, res) => {
-  const offices = await prisma.office.findMany();
-  res.json({ offices });
-});
 app.get("/api/department/:id", async (req, res) => {
   const id = Number(req.params.id);
   const department = await prisma.department.findMany();
   res.json({ department });
 });
+app.get("/api/offices", async (req, res) => {
+  const offices = await prisma.office.findMany({
+    include: {
+      department: true,
+    },
+  });
+  res.json({ offices });
+});
+app.get("/api/office/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const office = await prisma.office.findFirst({
+    where: {
+      id,
+    },
+  });
+  res.json({ office });
+});
+
 app.post("/api/addDepartment", async (req, res) => {
   const { office, name, description } = req.body;
   const department = await prisma.department.create({
@@ -312,6 +326,28 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.error("Error handling create_ticket", error);
     }
+  });
+  socket.on("transfer_ticket", (information) => {
+    try {
+      async function createTicket(name, department) {
+        const ticket = await prisma.tickets.create({
+          data: {
+            name: name,
+            departmentId: department,
+          },
+        });
+        console.log(ticket);
+      }
+      createTicket(information.ticket, information.transferId);
+
+      console.log(
+        `Tranfered ${information.ticket} Ticket to ${information.transferId}`
+      );
+      io.emit("receive_ticket");
+    } catch (error) {
+      console.error("Error handling create_ticket", error);
+    }
+    console.log(information);
   });
   socket.on("display_ticket", (data) => {
     console.log(`${data.name} - ${data.number} - ${data.department}`);
