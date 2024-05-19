@@ -249,9 +249,9 @@ app.post("/api/addDepartment", async (req, res) => {
   const { office, name, description } = req.body;
   const department = await prisma.department.create({
     data: {
-      name: name,
+      name: name.toUpperCase(),
       now_serving: "",
-      description,
+      description: description.toUpperCase(),
       officeId: Number(office),
     },
   });
@@ -309,14 +309,24 @@ io.on("connection", (socket) => {
         const ticket = await prisma.tickets.create({
           data: {
             name: name,
-            departmentId: department,
+            department: {
+              connect: { id: department },
+            },
+          },
+          include: {
+            department: {
+              include: {
+                office: true,
+              },
+            },
           },
         });
         console.log(ticket);
         socket.emit("response", {
-          id: ticket.id,
           name: ticket.name,
-          departmentId: ticket.departmentId,
+          departmentId: ticket.department.name,
+          departmentDescription: ticket.department.description,
+          office: ticket.department.office.name,
         });
       }
       createTicket(information.name, information.department);
@@ -356,19 +366,23 @@ io.on("connection", (socket) => {
   socket.on("display_unified_ticket", (data) => {
     console.log(data);
     console.log("display unified ticket");
-    async function updateTicket(name, id, department) {
+    async function updateTicket(name, department) {
       const ticket = await prisma.department.update({
         where: {
           id: Number(department),
         },
         data: {
-          now_serving: `${id} - ${name}`,
+          now_serving: `${name}`,
         },
       });
       console.log(ticket);
-      io.emit("refresh");
+      if (name === "") {
+        io.emit("refreshRemove");
+      } else {
+        io.emit("refresh");
+      }
     }
-    updateTicket(data.name, data.number, data.department);
+    updateTicket(data.name, data.department);
     console.log("Ticket Updated");
   });
   socket.on("remove_ticket", (information) => {
@@ -397,7 +411,7 @@ io.on("connection", (socket) => {
       console.log(ticket);
     }
     removeNowServing(information.department);
-    io.emit("refresh");
+    io.emit("refreshRemove");
   });
   socket.on("add_time", (information) => {
     async function createTime(time, department) {

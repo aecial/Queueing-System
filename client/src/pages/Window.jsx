@@ -184,10 +184,7 @@ const Window = () => {
                     />
                   </figure>
                   <div className="card-body text-white">
-                    <h2 className="card-title text-red-500">
-                      # <span className="underline">{now.id}</span>
-                    </h2>
-                    <p className="text-center text-white">{now.name}</p>
+                    <h2 className="text-center text-white">{now.name}</h2>
                   </div>
                 </div>
                 {Object.keys(now).length !== 0 ? (
@@ -206,9 +203,6 @@ const Window = () => {
                 )}
               </div>
             ) : (
-              // <p>
-              //   {now.id} - {now.name}
-              // </p>
               <span></span>
             )}
             <dialog id="transfer_modal" className="modal">
@@ -257,11 +251,7 @@ const Window = () => {
             <h2 className="text-center"> NOW SERVING</h2>
           </div>
           {testItems.map((item) => {
-            return (
-              <p key={item.id}>
-                {item.id} - {item.name}
-              </p>
-            );
+            return <p key={item.id}>{item.name}</p>;
           })}
           {testItems.length === 0 && Object.keys(now).length === 0 ? (
             <button
@@ -272,21 +262,23 @@ const Window = () => {
               No Tickets Yet
             </button>
           ) : (
-            <button
-              onClick={() => {
-                stopTimer();
-                handleClick();
-              }}
-              className="btn btn-primary w-full"
-            >
-              {Object.keys(now).length === 0
-                ? "Start"
-                : testItems.length === 0 && Object.keys(now).length === 0
-                ? "No Tickets Yet"
-                : testItems.length === 0
-                ? "Done"
-                : "Next"}
-            </button>
+            <div className="flex justify-center items-center">
+              <button
+                onClick={() => {
+                  stopTimer();
+                  handleClick();
+                }}
+                className="btn btn-primary w-[30%] text-2xl "
+              >
+                {Object.keys(now).length === 0
+                  ? "Start"
+                  : testItems.length === 0 && Object.keys(now).length === 0
+                  ? "No Tickets Yet"
+                  : testItems.length === 0
+                  ? "Done"
+                  : "Next"}
+              </button>
+            </div>
           )}
           <p className="hidden">Elapsed Time: {elapsedTime} seconds</p>
         </div>
