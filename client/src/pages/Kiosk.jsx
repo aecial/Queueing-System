@@ -125,19 +125,20 @@ const Kiosk = () => {
           }
         >
           <div className="modal-box bg-slate-100 text-black">
-            <h3 className="font-bold text-lg">
-              You have created a new Ticket!
+            <h3 className="font-bold text-4xl text-center">
+              {response.office} OFFICE
             </h3>
             <div className="divider"></div>
+
             <h3 className="font-bold text-center mt-10 text-2xl text-red-500">
-              Window {response.departmentId}
+              Window: {response.departmentId}
             </h3>
-            <h2 className="py-4 mt-4 text-4xl border-2 border-black text-center bg-">
-              #{response.id} - {response.name}
+            <h2 className="py-4 mt-4 text-[50px] border-2 border-black text-center">
+              {response.name}
             </h2>
-            <p className="text-red-500">
-              Take a picture or write down your ticket
-            </p>
+            <h3 className="font-bold text-center mt-4 text-xl">
+              Purpose: {response.departmentDescription}
+            </h3>
             <div className="modal-action">
               <form method="dialog">
                 <button
@@ -165,7 +166,7 @@ const Kiosk = () => {
           {departments.map((departmentInfo) => {
             return (
               <option value={departmentInfo.id}>
-                WINDOW {departmentInfo.name} - {departmentInfo.description}
+                {departmentInfo.name} - {departmentInfo.description}
               </option>
             );
           })}
