@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader";
-import LoginDiv from "../components/LoginDiv";
 
 const Report = () => {
   const [departments, setDepartments] = useState([]);
+  const [offices, setOffices] = useState([]);
+  const [isOfficeSelected, setIsOfficeSelected] = useState(false);
   const [isWindowSelected, setIsWindowSelected] = useState(false);
   const [selectedDept, setSelectedDept] = useState();
   const [months, setMonths] = useState([]);
@@ -11,30 +12,97 @@ const Report = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [since, setSince] = useState("");
   const [averageServiceTime, setAverageServiceTime] = useState();
-  async function getDepartments() {
+  const [initialReport, setInitialReport] = useState({
+    reportCount: 0,
+    since: "",
+    averageServiceTime: 0,
+  });
+  async function getDepartments(office) {
     try {
-      const response = await fetch(`/api/departments`);
+      const response = await fetch(`/api/deptByOffice/${office}`);
       const departments = await response.json();
-      setDepartments(departments.departments);
+      setDepartments(departments.department);
     } catch (error) {
       console.error("Error fetching tickets:", error);
     } finally {
       setIsLoading(false);
     }
   }
+  async function getOffices() {
+    try {
+      const response = await fetch(`/api/offices`);
+      const offices = await response.json();
+      console.log(offices.offices);
+      setOffices(offices.offices);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  }
   useEffect(() => {
-    getDepartments();
+    getOffices();
   }, []);
   async function getReport() {
     const response = await fetch(`/api/report`);
     const reportInformation = await response.json();
+    const initialData = {
+      reportCount: reportInformation.reportCount,
+      since: reportInformation.since.createdAt,
+      averageServiceTime: reportInformation.reportAverage._avg.service_time,
+    };
+    setInitialReport(initialData);
     setReportCount(reportInformation.reportCount);
     setSince(reportInformation.since.createdAt);
+    setAverageServiceTime(reportInformation.reportAverage._avg.service_time);
+  }
+  async function getReportByOffice(office) {
+    const response = await fetch(`/api/reportByOffice/${office}`);
+    const reportInformation = await response.json();
+    setReportCount(reportInformation.reportCount);
+    if (reportInformation.since == null) {
+      setSince("N/A");
+    } else {
+      setSince(reportInformation.since.createdAt);
+    }
+
     setAverageServiceTime(reportInformation.reportAverage._avg.service_time);
   }
   useEffect(() => {
     getReport();
   }, []);
+  async function handleOfficeSelect(office) {
+    if (office) {
+      setIsOfficeSelected(true);
+      getDepartments(office);
+      getReportByOffice(office);
+    } else {
+      setIsOfficeSelected(false);
+      setIsWindowSelected(false);
+      setSelectedDept(null);
+      setDepartments([]);
+      setReportCount(initialReport.reportCount);
+      setSince(initialReport.since);
+      setAverageServiceTime(initialReport.averageServiceTime);
+    }
+
+    // const response = await fetch(`/api/report/${dept}`);
+    // const reportInformation = await response.json();
+    // // Extract months from the response and set them into state
+    // if (reportInformation.months && reportInformation.months.length > 0) {
+    //   setMonths(reportInformation.months.map((item) => item.month));
+    // } else {
+    //   setMonths([]); // If no months are available, set state to empty array
+    // }
+
+    // if (reportInformation.reportCount === 0) {
+    //   setReportCount(0);
+    //   setSince("");
+    //   setAverageServiceTime(0);
+    // } else {
+    //   setReportCount(reportInformation.reportCount);
+    //   setSince(reportInformation.since.createdAt);
+    //   setAverageServiceTime(reportInformation.reportAverage._avg.service_time);
+    // }
+  }
   async function handleSelect(dept) {
     if (dept === "") {
       setIsWindowSelected(false);
@@ -99,23 +167,44 @@ const Report = () => {
         <>
           <div>
             <div className="label">
-              <span className="label-text text-4xl">Select Window:</span>
+              <span className="label-text text-4xl">Select Office:</span>
             </div>
             <select
-              onChange={(e) => handleSelect(e.target.value)}
+              onChange={(e) => handleOfficeSelect(e.target.value)}
               className="select select-primary w-full max-w-xs text-lg"
             >
               <option value={""} selected>
                 ALL
               </option>
-              {departments.map((department) => {
+              {offices.map((office) => {
                 return (
-                  <option key={department.id} value={department.id}>
-                    Window {department.id}
+                  <option key={office.id} value={office.id}>
+                    {office.name}
                   </option>
                 );
               })}
             </select>
+            {isOfficeSelected && (
+              <>
+                <div className="label">
+                  <span className="label-text text-4xl">Select Window:</span>
+                </div>
+                <select
+                  onChange={(e) => handleSelect(e.target.value)}
+                  className="select select-primary w-full max-w-xs text-lg"
+                >
+                  <option value={""} selected disabled></option>
+                  {departments.map((department) => {
+                    return (
+                      <option key={department.id} value={department.id}>
+                        {department.name}
+                      </option>
+                    );
+                  })}
+                </select>
+              </>
+            )}
+
             {isWindowSelected && selectedDept !== "" ? (
               <select
                 onChange={(e) => monthSelect(selectedDept, e.target.value)}
@@ -138,13 +227,15 @@ const Report = () => {
           <div className="stats shadow">
             <div className="stat place-items-center">
               <div className="stat-title">Tickets Completed</div>
-              <div className="stat-value">{reportCount}</div>
+              <div className="stat-value text-primary">{reportCount}</div>
               <div className="stat-desc">Since: {since.split("T")[0]}</div>
             </div>
             <div className="stat place-items-center">
               <div className="stat-title">Average Service Time</div>
               <div className="stat-value text-secondary">
-                {averageServiceTime ? averageServiceTime.toFixed(2) + "s" : ""}
+                {averageServiceTime
+                  ? averageServiceTime.toFixed(2) + "s"
+                  : "N/A"}
               </div>
             </div>
           </div>

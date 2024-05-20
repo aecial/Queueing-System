@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import LoginDiv from "../components/LoginDiv";
+
 import Loader from "../components/Loader";
 const AddDepartment = () => {
   const [offices, setOffices] = useState([]);
