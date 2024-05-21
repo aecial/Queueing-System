@@ -220,19 +220,17 @@ const Window = () => {
 
                         <div className="grid grid-cols-3 gap-3">
                           {data.department.map((win) => {
-                            {
-                              return win.id === office.windowId ? (
-                                ""
-                              ) : (
-                                <button
-                                  key={win.id}
-                                  className="btn btn-primary"
-                                  onClick={() => transferTicket(win.id)}
-                                >
-                                  {win.name}
-                                </button>
-                              );
-                            }
+                            return win.id === office.windowId ? (
+                              ""
+                            ) : (
+                              <button
+                                key={win.id}
+                                className="btn btn-primary"
+                                onClick={() => transferTicket(win.id)}
+                              >
+                                {win.name}
+                              </button>
+                            );
                           })}
                         </div>
                         <div className="divider"></div>
