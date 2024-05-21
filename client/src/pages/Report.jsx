@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Loader from "../components/Loader";
-
+import { useNavigate } from "react-router-dom";
 const Report = () => {
+  const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [offices, setOffices] = useState([]);
   const [isOfficeSelected, setIsOfficeSelected] = useState(false);
@@ -239,6 +240,13 @@ const Report = () => {
               </div>
             </div>
           </div>
+          <button
+            type="button"
+            className="btn btn-primary mt-14 w-96 text-2xl"
+            onClick={() => navigate("/admin")}
+          >
+            Back
+          </button>
         </>
       )}
     </div>

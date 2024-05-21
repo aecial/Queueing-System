@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-
+import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 const AddDepartment = () => {
+  const navigate = useNavigate();
   const [offices, setOffices] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const firstGetWin = async () => {
@@ -67,6 +68,13 @@ const AddDepartment = () => {
               className="btn btn-primary mt-8 w-96 text-2xl"
             >
               Add
+            </button>
+            <button
+              type="button"
+              className="btn btn-neutral mt-8 w-96 text-2xl"
+              onClick={() => navigate("/admin")}
+            >
+              Back
             </button>
           </form>
         </label>
