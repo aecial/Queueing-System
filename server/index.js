@@ -111,6 +111,45 @@ app.get("/api/tickets/:id", async (req, res) => {
   });
   res.json({ tickets });
 });
+app.get("/api/reportByOffice/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const since = await prisma.service.findFirst({
+      where: {
+        department: {
+          officeId: Number(id),
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    const reportCount = await prisma.service.count({
+      where: {
+        department: {
+          officeId: Number(id),
+        },
+      },
+    });
+
+    const reportAverage = await prisma.service.aggregate({
+      _avg: {
+        service_time: true,
+      },
+      where: {
+        department: {
+          officeId: Number(id),
+        },
+      },
+    });
+
+    res.json({ since, reportCount, reportAverage });
+  } catch (error) {
+    console.error("Error fetching report by office:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 app.get("/api/report", async (req, res) => {
   const since = await prisma.service.findFirst();
   const reportCount = await prisma.service.count();
@@ -225,6 +264,15 @@ app.get("/api/departments", async (req, res) => {
 app.get("/api/department/:id", async (req, res) => {
   const id = Number(req.params.id);
   const department = await prisma.department.findMany();
+  res.json({ department });
+});
+app.get("/api/deptByOffice/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  const department = await prisma.department.findMany({
+    where: {
+      officeId: id,
+    },
+  });
   res.json({ department });
 });
 app.get("/api/offices", async (req, res) => {

@@ -162,11 +162,11 @@ const Window = () => {
   };
 
   return (
-    <div className="bg-gray-800 min-h-screen text-white text-4xl">
+    <div className="bg-gray-800 min-h-screen text-white text-3xl">
       {isLoading ? (
         <Loader />
       ) : (
-        <div>
+        <div className="p-2">
           <div className="h-auto mb-10">
             <div className="flex flex-col w-full items-center justify-center mb-7 pt-6">
               <h1>{office.office} OFFICE</h1>
@@ -176,7 +176,7 @@ const Window = () => {
 
             {now !== null || {} ? (
               <div className="flex justify-center gap-10 items-center ">
-                <div className="card w-96 bg-base-100 shadow-xl image-full block ml-[122px]">
+                <div className="card w-96 bg-base-100 shadow-xl image-full block ml-[150px]">
                   <figure>
                     <img
                       src="https://images.pexels.com/photos/7232830/pexels-photo-7232830.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
@@ -220,19 +220,17 @@ const Window = () => {
 
                         <div className="grid grid-cols-3 gap-3">
                           {data.department.map((win) => {
-                            {
-                              return win.id === office.windowId ? (
-                                ""
-                              ) : (
-                                <button
-                                  key={win.id}
-                                  className="btn btn-primary"
-                                  onClick={() => transferTicket(win.id)}
-                                >
-                                  {win.name}
-                                </button>
-                              );
-                            }
+                            return win.id === office.windowId ? (
+                              ""
+                            ) : (
+                              <button
+                                key={win.id}
+                                className="btn btn-primary"
+                                onClick={() => transferTicket(win.id)}
+                              >
+                                {win.name}
+                              </button>
+                            );
                           })}
                         </div>
                         <div className="divider"></div>
@@ -250,9 +248,16 @@ const Window = () => {
             </dialog>
             <h2 className="text-center"> NOW SERVING</h2>
           </div>
-          {testItems.map((item) => {
-            return <p key={item.id}>{item.name}</p>;
-          })}
+          <div className="flex flex-col h-56 overflow-y-scroll border">
+            {testItems.map((item) => {
+              return (
+                <div>
+                  <p key={item.id}>{item.name}</p>
+                  <div className="divider"></div>
+                </div>
+              );
+            })}
+          </div>
           {testItems.length === 0 && Object.keys(now).length === 0 ? (
             <button
               onClick={handleClick}
@@ -268,7 +273,7 @@ const Window = () => {
                   stopTimer();
                   handleClick();
                 }}
-                className="btn btn-primary w-[30%] text-2xl "
+                className="btn btn-primary w-[30%] text-2xl mt-2"
               >
                 {Object.keys(now).length === 0
                   ? "Start"
