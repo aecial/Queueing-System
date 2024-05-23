@@ -1,155 +1,254 @@
 import React, { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import socket from "../lib/socket";
+import SmallLoader from "../components/SmallLoader";
+function generateRandomName() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const length = 5;
+  const randomValues = new Uint32Array(length);
+  window.crypto.getRandomValues(randomValues);
+  let randomName = "";
+  for (let i = 0; i < length; i++) {
+    randomName += characters.charAt(randomValues[i] % characters.length);
+  }
+  return randomName;
+}
 
 const Test = () => {
-  const { department } = useParams();
-  const [socket, setSocket] = useState(null);
-  const [now, setNow] = useState({});
-  const [testItems, setTestItems] = useState([]);
-  const [elapsedTime, setElapsedTime] = useState(0);
-  const [timer, setTimer] = useState(null);
+  const [department, setDepartment] = useState(0);
+  const [windows, setWindows] = useState([]);
+  const [alertView, setAlertView] = useState(false);
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingWindows, setLoadingWindows] = useState(false);
+  const [loadingResponse, setLoadingResponse] = useState(false);
+  const [response, setResponse] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [randomName, setRandomName] = useState(generateRandomName());
+  const [selectedOffice, setSelectedOffice] = useState();
+
+  const resetState = () => {
+    setDepartment(0);
+    setAlertView(false);
+    setResponse(null);
+    setModalOpen(false);
+    setRandomName(generateRandomName());
+    setSelectedOffice();
+    setLoading(false);
+    setLoadingWindows(false);
+    setLoadingResponse(false);
+  };
 
   useEffect(() => {
-    // Create a new WebSocket connection when the component mounts
-    const newSocket = io.connect("http://localhost:8080");
-    setSocket(newSocket);
+    async function getOffices() {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/offices");
+        const departments = await response.json();
+        setDepartments(departments.offices);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getOffices();
+  }, []);
 
-    // Clean up the WebSocket connection when the component unmounts
+  useEffect(() => {
+    setRandomName(generateRandomName());
+  }, []);
+
+  useEffect(() => {
+    socket.off("response");
+    socket.on("response", function (data) {
+      setResponse(data);
+      setLoadingResponse(false);
+      setModalOpen(true);
+    });
+  }, []);
+
+  const sendTicket = (dept) => {
+    if (dept === 0) {
+      setAlertView(true);
+      setTimeout(() => {
+        setAlertView(false);
+      }, 5000);
+    } else {
+      setLoadingResponse(true);
+      socket.emit("create_ticket", { name: randomName, department: dept });
+      // resetState(); // Reset state after sending ticket
+    }
+  };
+
+  const closeModal = () => {
+    resetState(); // Reset state on modal close
+  };
+  const handleSelectOffice = (officeId) => {
+    setSelectedOffice(officeId);
+    async function getWindows() {
+      setLoadingWindows(true);
+      try {
+        const response = await fetch(`/api/deptByOffice/${officeId}`);
+        const information = await response.json();
+        setWindows(information.department);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingWindows(false);
+      }
+    }
+    getWindows();
+  };
+  const handleSend = (dept) => {
+    setDepartment(dept);
+    sendTicket(dept);
+  };
+  useEffect(() => {
+    const handleSocketError = (error) => {
+      if (error.code === "ECONNRESET") {
+        console.error("Socket connection reset:", error.message);
+      } else {
+        console.error("Socket error:", error.message);
+      }
+    };
+    socket.on("error", handleSocketError);
+
     return () => {
-      newSocket.disconnect();
+      socket.off("error", handleSocketError);
     };
   }, []);
-  const receiveTicket = async () => {
-    try {
-      const response = await fetch(`/api/tickets/1`);
-      const tickets = await response.json();
-      setTestItems(tickets.tickets);
-    } catch (error) {
-      console.error("Error fetching tickets:", error);
-    }
-  };
-
-  useEffect(() => {
-    receiveTicket();
-  }, []);
-  useEffect(() => {
-    if (socket) {
-      // Join room
-      socket.emit("join_room", department);
-
-      // Listen for ticket updates
-      socket.on("receive_ticket", () => {
-        receiveTicket();
-      });
-
-      // Clean up event listener
-      return () => {
-        socket.removeAllListeners("receive_ticket");
-      };
-    }
-  }, [socket, department]);
-  function addTime(time) {
-    console.log(time);
-    socket.emit("add_time", { time, department });
-  }
-  const handleClick = () => {
-    if (testItems.length === 0) {
-      logTime(); // Log time before reset
-      setNow({});
-      if (socket) {
-        socket.emit("display_ticket", {
-          name: null,
-          number: null,
-          department: "1",
-        });
-      }
-      setElapsedTime(0);
-      return;
-    } else {
-      setNow(testItems[0]);
-      if (socket) {
-        socket.emit("display_ticket", {
-          name: testItems[0].name,
-          number: testItems[0].id,
-          department: "1",
-        });
-      }
-      socket.emit("remove_ticket", { id: testItems[0].id });
-      setTestItems((prevItems) => prevItems.slice(1));
-      logTime();
-      startTimer(); // Start the timer
-    }
-  };
-
-  const startTimer = () => {
-    const startTime = Date.now();
-    const interval = setInterval(() => {
-      const currentTime = Date.now();
-      const elapsedTime = (currentTime - startTime) / 1000;
-      setElapsedTime(elapsedTime.toFixed(2));
-    }, 10);
-    setTimer(interval);
-  };
-
-  const stopTimer = () => {
-    clearInterval(timer);
-    setTimer(null);
-  };
-
-  const logTime = () => {
-    if (elapsedTime === 0) {
-      return;
-    }
-    console.log("Elapsed Time:", elapsedTime, "seconds");
-    addTime(elapsedTime);
-  };
 
   return (
-    <div className="bg-gray-800 min-h-screen text-white text-4xl">
-      <div className="h-24">
-        NOW SERVING
-        {now !== null || {} ? (
-          <p>
-            {now.id} - {now.name}
-          </p>
-        ) : (
-          <span></span>
-        )}
+    <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col  items-center p-5">
+      <div className="avatar flex flex-col gap-10">
+        <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+          <img src="/OIP.jpeg" alt="LGU-LOGO" />
+        </div>
+        <h1 className="text-4xl text-black font-bold">
+          LGU-GERONA QUEUEING SYSTEM
+        </h1>
       </div>
-      {testItems.map((item) => {
-        return (
-          <p key={item.id}>
-            {item.id} - {item.name}
-          </p>
-        );
-      })}
-      {testItems.length === 0 && Object.keys(now).length === 0 ? (
-        <button
-          onClick={handleClick}
-          className="border border-white p-1 w-full disabled:bg-red-600 "
-          disabled
-        >
-          No Tickets Yet
-        </button>
+      {alertView ? (
+        <div role="alert" className="alert alert-warning">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <span>Warning: Select a Window</span>
+          <button
+            onClick={() => setAlertView(false)}
+            className="btn btn-sm btn-outline text-red-500 hover:text-white hover:bg-red-500"
+          >
+            X
+          </button>
+        </div>
       ) : (
-        <button
-          onClick={() => {
-            stopTimer();
-            handleClick();
-          }}
-          className="border border-white p-1 w-full "
-        >
-          {Object.keys(now).length === 0
-            ? "Start"
-            : testItems.length === 0 && Object.keys(now).length === 0
-            ? "No Tickets Yet"
-            : testItems.length === 0
-            ? "Done"
-            : "Next"}
-        </button>
+        ""
       )}
-      <p>Elapsed Time: {elapsedTime} seconds</p>
+      {response && (
+        <dialog
+          id="my_modal_5"
+          className={
+            "modal " +
+            (modalOpen ? "modal-open" : "modal-close") +
+            " modal-bottom sm:modal-middle"
+          }
+        >
+          <div className="modal-box bg-slate-100 text-black">
+            <h3 className="font-bold text-4xl text-center">
+              {response.office} OFFICE
+            </h3>
+            <div className="divider"></div>
+            <h3 className="font-bold text-center mt-10 text-2xl text-red-500">
+              Window: {response.departmentId}
+            </h3>
+            <h2 className="py-4 mt-4 text-[50px] border-2 border-black text-center">
+              {response.name}
+            </h2>
+            <h3 className="font-bold text-center mt-4 text-xl">
+              Purpose: {response.departmentDescription}
+            </h3>
+            <div className="modal-action">
+              <form method="dialog">
+                <button
+                  className="btn btn-success text-white"
+                  onClick={closeModal}
+                >
+                  Close
+                </button>
+              </form>
+            </div>
+          </div>
+        </dialog>
+      )}
+      {loadingResponse ? (
+        <SmallLoader />
+      ) : (
+        <div className="w-screen flex flex-col items-center gap-3">
+          {selectedOffice ? (
+            <div className="text-black pt-5">
+              {loadingWindows ? (
+                <SmallLoader />
+              ) : (
+                <>
+                  <h1 className="text-3xl text-center mb-10">SELECT WINDOW</h1>
+                  <div className="grid grid-cols-3 gap-10">
+                    {windows.map((window) => {
+                      return (
+                        <button
+                          key={window.id}
+                          onClick={() => handleSend(window.id)}
+                          className="btn btn-success uppercase text-4xl text-white w-56 h-24"
+                        >
+                          {window.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    className="btn btn-primary w-44 mt-10"
+                    onClick={resetState}
+                  >
+                    Back
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="text-black pt-32">
+              {loading ? (
+                <SmallLoader />
+              ) : (
+                <>
+                  <h1 className="text-3xl text-center mb-10">SELECT OFFICE:</h1>
+                  <div className="grid grid-cols-3 gap-10">
+                    {departments.map((info) => {
+                      return (
+                        <button
+                          key={info.id}
+                          onClick={() => handleSelectOffice(info.id)}
+                          className="btn btn-success uppercase text-4xl text-white w-56 h-24"
+                        >
+                          {info.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

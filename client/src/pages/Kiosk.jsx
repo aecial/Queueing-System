@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import socket from "../lib/socket";
+import SmallLoader from "../components/SmallLoader";
 function generateRandomName() {
   const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   const length = 5;
@@ -14,11 +15,16 @@ function generateRandomName() {
 
 const Kiosk = () => {
   const [department, setDepartment] = useState(0);
+  const [windows, setWindows] = useState([]);
   const [alertView, setAlertView] = useState(false);
   const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingWindows, setLoadingWindows] = useState(false);
+  const [loadingResponse, setLoadingResponse] = useState(false);
   const [response, setResponse] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [randomName, setRandomName] = useState(generateRandomName());
+  const [selectedOffice, setSelectedOffice] = useState();
 
   const resetState = () => {
     setDepartment(0);
@@ -26,15 +32,26 @@ const Kiosk = () => {
     setResponse(null);
     setModalOpen(false);
     setRandomName(generateRandomName());
+    setSelectedOffice();
+    setLoading(false);
+    setLoadingWindows(false);
+    setLoadingResponse(false);
   };
 
   useEffect(() => {
-    async function getDepartments() {
-      const response = await fetch("/api/departments");
-      const departments = await response.json();
-      setDepartments(departments.departments);
+    async function getOffices() {
+      setLoading(true);
+      try {
+        const response = await fetch("/api/offices");
+        const departments = await response.json();
+        setDepartments(departments.offices);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     }
-    getDepartments();
+    getOffices();
   }, []);
 
   useEffect(() => {
@@ -45,24 +62,46 @@ const Kiosk = () => {
     socket.off("response");
     socket.on("response", function (data) {
       setResponse(data);
+      setLoadingResponse(false);
       setModalOpen(true);
     });
   }, []);
 
-  const sendTicket = () => {
-    if (department === 0) {
+  const sendTicket = (dept) => {
+    if (dept === 0) {
       setAlertView(true);
       setTimeout(() => {
         setAlertView(false);
       }, 5000);
     } else {
-      socket.emit("create_ticket", { name: randomName, department });
-      resetState(); // Reset state after sending ticket
+      setLoadingResponse(true);
+      socket.emit("create_ticket", { name: randomName, department: dept });
+      // resetState(); // Reset state after sending ticket
     }
   };
 
   const closeModal = () => {
     resetState(); // Reset state on modal close
+  };
+  const handleSelectOffice = (officeId) => {
+    setSelectedOffice(officeId);
+    async function getWindows() {
+      setLoadingWindows(true);
+      try {
+        const response = await fetch(`/api/deptByOffice/${officeId}`);
+        const information = await response.json();
+        setWindows(information.department);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingWindows(false);
+      }
+    }
+    getWindows();
+  };
+  const handleSend = (dept) => {
+    setDepartment(dept);
+    sendTicket(dept);
   };
   useEffect(() => {
     const handleSocketError = (error) => {
@@ -80,7 +119,7 @@ const Kiosk = () => {
   }, []);
 
   return (
-    <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col justify-center items-center p-5">
+    <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col  items-center p-5">
       <div className="avatar flex flex-col gap-10">
         <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
           <img src="/OIP.jpeg" alt="LGU-LOGO" />
@@ -129,7 +168,6 @@ const Kiosk = () => {
               {response.office} OFFICE
             </h3>
             <div className="divider"></div>
-
             <h3 className="font-bold text-center mt-10 text-2xl text-red-500">
               Window: {response.departmentId}
             </h3>
@@ -152,54 +190,65 @@ const Kiosk = () => {
           </div>
         </dialog>
       )}
-      <div className="w-screen flex flex-col p-10 items-center justify-center gap-3">
-        <select
-          className="select select-lg text-3xl select-primary w-full max-w-xs bg-gray-800"
-          name="department"
-          id="department"
-          value={department}
-          onChange={(e) => setDepartment(Number(e.target.value))}
-        >
-          <option value={0} disabled>
-            SELECT A WINDOW
-          </option>
-          {departments.map((departmentInfo) => {
-            return (
-              <option value={departmentInfo.id}>
-                {departmentInfo.name} - {departmentInfo.description}
-              </option>
-            );
-          })}
-        </select>
-        <label
-          htmlFor="name"
-          className="input input-lg text-4xl bg-blue-500 input-bordered input-primary items-center gap-5  max-w-xs hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 16 16"
-            fill="currentColor"
-            className="w-4 h-4 opacity-70"
-          >
-            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
-          </svg>
-          <input
-            type="text"
-            name="name"
-            id="name"
-            className="grow w-10"
-            placeholder="Name"
-            value={randomName}
-            readOnly
-          />
-        </label>
-        <button
-          onClick={sendTicket}
-          className="btn btn-success btn-lg w-[19%] text-white"
-        >
-          Create Ticket
-        </button>
-      </div>
+      {loadingResponse ? (
+        <SmallLoader />
+      ) : (
+        <div className="w-screen flex flex-col items-center gap-3">
+          {selectedOffice ? (
+            <div className="text-black pt-5">
+              {loadingWindows ? (
+                <SmallLoader />
+              ) : (
+                <>
+                  <h1 className="text-3xl text-center mb-10">SELECT WINDOW</h1>
+                  <div className="grid grid-cols-3 gap-10">
+                    {windows.map((window) => {
+                      return (
+                        <button
+                          key={window.id}
+                          onClick={() => handleSend(window.id)}
+                          className="btn btn-success uppercase text-4xl text-white w-56 h-24"
+                        >
+                          {window.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <button
+                    className="btn btn-primary w-44 mt-10"
+                    onClick={resetState}
+                  >
+                    Back
+                  </button>
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="text-black pt-32">
+              {loading ? (
+                <SmallLoader />
+              ) : (
+                <>
+                  <h1 className="text-3xl text-center mb-10">SELECT OFFICE:</h1>
+                  <div className="grid grid-cols-3 gap-10">
+                    {departments.map((info) => {
+                      return (
+                        <button
+                          key={info.id}
+                          onClick={() => handleSelectOffice(info.id)}
+                          className="btn btn-success uppercase text-4xl text-white w-56 h-24"
+                        >
+                          {info.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

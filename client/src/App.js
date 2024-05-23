@@ -24,7 +24,7 @@ function App() {
         <Route path="/window/:department" element={<Window />} />
         <Route path="/window" element={<WindowPicker />} />
         <Route path="/kiosk" element={<Kiosk />} />
-        <Route path="/test/:department" element={<Test />} />
+        <Route path="/test/" element={<Test />} />
         <Route element={<ProtectedRoutes />}>
           <Route path="/report" element={<Report />} />
           <Route path="/admin" element={<Admin />} />
