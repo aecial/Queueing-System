@@ -207,9 +207,13 @@ const Kiosk = () => {
                         <button
                           key={window.id}
                           onClick={() => handleSend(window.id)}
-                          className="btn btn-success uppercase text-4xl text-white w-56 h-24"
+                          className="btn btn-success uppercase text-4xl text-white w-80 h-24 flex flex-col"
                         >
                           {window.name}
+                          <br />
+                          <span className="text-xl">
+                            ({window.description})
+                          </span>
                         </button>
                       );
                     })}
