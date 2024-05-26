@@ -17,11 +17,20 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const { token } = await response.json(); // Parse the JSON response
+        const { token, officeId } = await response.json(); // Parse the JSON response
         // Store token in local storage
         sessionStorage.setItem("token", token);
+        if (officeId) {
+          sessionStorage.setItem("officeId", officeId);
+        } else {
+          sessionStorage.removeItem("officeId");
+        }
         // Navigate to the previous URL if available, otherwise navigate to default URL
-        navigate("/admin");
+        if (officeId) {
+          navigate("/window");
+        } else {
+          navigate("/admin");
+        }
       } else {
         // Handle login error (e.g., invalid credentials)
       }

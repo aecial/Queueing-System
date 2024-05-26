@@ -59,7 +59,8 @@ app.post("/api/login", async (req, res) => {
       const token = jwt.sign({ userId: user.id }, "1223", {
         expiresIn: "1h",
       });
-      res.json({ token });
+      const officeId = user.officeId;
+      res.json({ token, officeId });
     } else {
       res.sendStatus(403); // Incorrect password
     }
