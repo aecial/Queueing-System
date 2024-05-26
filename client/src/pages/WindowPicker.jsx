@@ -9,10 +9,17 @@ const WindowPicker = () => {
 
   useEffect(() => {
     async function getDepartments() {
-      const officeId = sessionStorage.getItem("officeId");
-      const response = await fetch(`/api/deptByOffice/${officeId}`);
-      const departments = await response.json();
-      setDepartments(departments.department);
+      setIsLoading(true);
+      try {
+        const officeId = sessionStorage.getItem("officeId");
+        const response = await fetch(`/api/deptByOffice/${officeId}`);
+        const departments = await response.json();
+        setDepartments(departments.department);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
     getDepartments();
   }, []);

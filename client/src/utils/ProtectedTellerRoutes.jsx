@@ -5,13 +5,20 @@ import Loader from "../components/Loader";
 const ProtectedTellerRoutes = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [departments, setDepartments] = useState([]);
   const [userOffice, setUserOffice] = useState(null);
   const location = useLocation();
-  const { department } = useParams(); // Get department from URL params
+  const { department } = useParams();
 
   useEffect(() => {
     const verifyToken = async () => {
       const token = sessionStorage.getItem("token");
+      const officeId = sessionStorage.getItem("officeId");
+
+      if (officeId) {
+        setUserOffice(officeId);
+      }
+
       if (!token) {
         setIsLoading(false);
         return;
@@ -25,11 +32,10 @@ const ProtectedTellerRoutes = () => {
           },
           body: JSON.stringify({ token }),
         });
-        const data = await response.json();
 
-        if (response.ok) {
+        if (response.ok && officeId) {
           setIsAuthenticated(true);
-          setUserOffice(data.office); // Assuming the response contains the user's office information
+          await fetchDepartments(officeId);
         } else {
           sessionStorage.removeItem("token");
         }
@@ -38,6 +44,18 @@ const ProtectedTellerRoutes = () => {
       }
 
       setIsLoading(false);
+    };
+
+    const fetchDepartments = async (officeId) => {
+      try {
+        const response = await fetch(`/api/deptByOffice/${officeId}`);
+        if (response.ok) {
+          const information = await response.json();
+          setDepartments(information.department);
+        }
+      } catch (error) {
+        console.error("Error fetching departments:", error);
+      }
     };
 
     verifyToken();
@@ -52,24 +70,15 @@ const ProtectedTellerRoutes = () => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
-  // Check office from session storage
-  const officeFromSession = sessionStorage.getItem("office");
+  const isUserOfficeAuthorized = departments.some(
+    (dep) => dep.id === parseInt(department, 10)
+  );
 
-  // Define allowed departments based on office
-  const allowedDepartments = {
-    Office1: ["1", "2"], // Replace with actual department IDs or names
-    Office2: ["3"],
-    // Add more offices and departments as needed
-  };
-
-  // Check if the user is allowed to access the department
-  const isAllowed = allowedDepartments[officeFromSession]?.includes(department);
-
-  if (!isAllowed) {
-    return <Navigate to="/unauthorized" />;
+  if (!isUserOfficeAuthorized) {
+    return <Navigate to="/window" />;
   }
 
   return <Outlet />;
