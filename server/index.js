@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("Eyy");
 });
 app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, officeId } = req.body;
 
   try {
     // Generate a salt
@@ -34,6 +34,7 @@ app.post("/api/register", async (req, res) => {
       data: {
         username: username,
         password: hash,
+        officeId,
       },
     });
 
