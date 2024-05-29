@@ -21,7 +21,6 @@ app.get("/", (req, res) => {
 });
 app.post("/api/register", async (req, res) => {
   const { username, password, officeId } = req.body;
-
   try {
     // Generate a salt
     const salt = await bcrypt.genSalt(10);
@@ -34,7 +33,7 @@ app.post("/api/register", async (req, res) => {
       data: {
         username: username,
         password: hash,
-        officeId,
+        officeId: Number(officeId),
       },
     });
 

@@ -16,6 +16,7 @@ import WindowManager from "./pages/WindowManager";
 import Unauthorized from "./pages/Unauthorized";
 import ProtectedTellerRoutes from "./utils/ProtectedTellerRoutes";
 import Logout from "./utils/Logout";
+import EmployeeManager from "./pages/EmployeeManager";
 function App() {
   return (
     <>
@@ -37,6 +38,7 @@ function App() {
           <Route path="/report" element={<Report />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/add-window" element={<AddDepartment />} />
+          <Route path="/add-employee" element={<EmployeeManager />} />
           <Route path="/window-manager" element={<WindowManager />} />
         </Route>
       </Routes>
