@@ -21,8 +21,8 @@ function App() {
   return (
     <>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/now-serving" element={<NowServing />} />
+        <Route path="/" element={<NowServing />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/room" element={<Room />} />
         <Route path="/watcher/:department" element={<Watcher />} />
 
