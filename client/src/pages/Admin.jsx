@@ -8,11 +8,16 @@ const Admin = () => {
   if (sessionStorage.getItem("token")) {
     return (
       <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center">
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <AdminCard
             title={"Add Window"}
             src={"addDept.svg"}
             onClick={() => navigate("/add-window")}
+          />
+          <AdminCard
+            title={"Add User"}
+            src={"addUser.svg"}
+            onClick={() => navigate("/add-employee")}
           />
           <AdminCard
             title={"View Report"}

@@ -17,11 +17,20 @@ const Login = () => {
       });
 
       if (response.ok) {
-        const { token } = await response.json(); // Parse the JSON response
+        const { token, officeId } = await response.json(); // Parse the JSON response
         // Store token in local storage
         sessionStorage.setItem("token", token);
+        if (officeId) {
+          sessionStorage.setItem("officeId", officeId);
+        } else {
+          sessionStorage.removeItem("officeId");
+        }
         // Navigate to the previous URL if available, otherwise navigate to default URL
-        navigate("/admin");
+        if (officeId) {
+          navigate("/window");
+        } else {
+          navigate("/admin");
+        }
       } else {
         // Handle login error (e.g., invalid credentials)
       }
@@ -55,7 +64,7 @@ const Login = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 type="text"
                 required
-                className="block w-full rounded-md border-0 py-1.5 text-slate-200 text-4xl shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 input-md"
+                className="block w-full rounded-md border-0 py-1.5 bg-transparent text-gray-800 text-4xl shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 input-md"
               />
             </div>
           </div>
@@ -75,7 +84,7 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
-                className="block w-full rounded-md border-0 py-1.5 text-slate-200 text-4xl shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 input-md"
+                className="block w-full rounded-md border-0 py-1.5 bg-transparent text-gray-800 text-4xl shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-800 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 input-md"
               />
             </div>
           </div>

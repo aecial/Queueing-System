@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { Outlet, Navigate } from "react-router-dom";
+import { Outlet, Navigate, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const ProtectedRoutes = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const verifyToken = async () => {
       const token = sessionStorage.getItem("token");
+      if (sessionStorage.getItem("officeId")) {
+        navigate("/window");
+      }
       if (!token) {
         setIsLoading(false);
         return;
@@ -47,7 +50,7 @@ const ProtectedRoutes = () => {
     );
   }
 
-  return isAuthenticated ? <Outlet /> : <Navigate to="/login" />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
 };
 
 export default ProtectedRoutes;

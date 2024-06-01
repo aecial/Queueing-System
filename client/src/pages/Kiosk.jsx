@@ -121,7 +121,7 @@ const Kiosk = () => {
   return (
     <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col  items-center p-5">
       <div className="avatar flex flex-col gap-10">
-        <div className=" w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+        <div className="absolute left-[-630px] w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
           <img src="/OIP.jpeg" alt="LGU-LOGO" />
         </div>
         <h1 className="text-4xl text-black font-bold">
@@ -204,17 +204,19 @@ const Kiosk = () => {
                   <div className="grid grid-cols-3 gap-10">
                     {windows.map((window) => {
                       return (
-                        <button
-                          key={window.id}
-                          onClick={() => handleSend(window.id)}
-                          className="btn btn-success uppercase text-4xl text-white w-80 h-24 flex flex-col"
-                        >
-                          {window.name}
-                          <br />
-                          <span className="text-xl">
-                            ({window.description})
-                          </span>
-                        </button>
+                        <div className="flex flex-col">
+                          <button
+                            key={window.id}
+                            onClick={() => handleSend(window.id)}
+                            className="btn btn-success uppercase text-4xl text-white w-80 h-32 flex flex-col"
+                          >
+                            {window.name}
+
+                            <span className=" text-xl">
+                              ({window.description})
+                            </span>
+                          </button>
+                        </div>
                       );
                     })}
                   </div>

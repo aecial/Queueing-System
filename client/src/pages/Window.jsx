@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
 
 const Window = () => {
+  const navigate = useNavigate();
   const { department } = useParams();
   const [socket, setSocket] = useState(null);
   const [now, setNow] = useState({});
@@ -169,9 +170,54 @@ const Window = () => {
         <div className="p-2">
           <div className="h-auto mb-10">
             <div className="flex flex-col w-full items-center justify-center mb-7 pt-6">
-              <h1>{office.office} OFFICE</h1>
+              <div className="flex justify-between w-full px-4">
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/window")}
+                >
+                  {" "}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
+                    />
+                  </svg>
+                  Back
+                </button>
+                <h1>{office.office} OFFICE</h1>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => navigate("/logout")}
+                >
+                  Logout
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9"
+                    />
+                  </svg>
+                </button>
+              </div>
               <div className="divider"></div>
-              <h3>Window {office.window}</h3>
+              <h3 className="text-4xl text-red-500 underline underline-offset-2">
+                Window {office.window}
+              </h3>
             </div>
 
             {now !== null || {} ? (

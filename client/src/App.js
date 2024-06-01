@@ -13,6 +13,10 @@ import WindowPicker from "./pages/WindowPicker";
 import Login from "./pages/Login";
 import ProtectedRoutes from "./utils/ProtectedRoutes";
 import WindowManager from "./pages/WindowManager";
+import Unauthorized from "./pages/Unauthorized";
+import ProtectedTellerRoutes from "./utils/ProtectedTellerRoutes";
+import Logout from "./utils/Logout";
+import EmployeeManager from "./pages/EmployeeManager";
 function App() {
   return (
     <>
@@ -21,14 +25,20 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/room" element={<Room />} />
         <Route path="/watcher/:department" element={<Watcher />} />
-        <Route path="/window/:department" element={<Window />} />
+
         <Route path="/window" element={<WindowPicker />} />
         <Route path="/kiosk" element={<Kiosk />} />
         <Route path="/test/" element={<Test />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route element={<ProtectedTellerRoutes />}>
+          <Route path="/window/:department" element={<Window />} />
+        </Route>
         <Route element={<ProtectedRoutes />}>
           <Route path="/report" element={<Report />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/add-window" element={<AddDepartment />} />
+          <Route path="/add-employee" element={<EmployeeManager />} />
           <Route path="/window-manager" element={<WindowManager />} />
         </Route>
       </Routes>

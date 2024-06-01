@@ -20,8 +20,7 @@ app.get("/", (req, res) => {
   res.send("Eyy");
 });
 app.post("/api/register", async (req, res) => {
-  const { username, password } = req.body;
-
+  const { username, password, officeId } = req.body;
   try {
     // Generate a salt
     const salt = await bcrypt.genSalt(10);
@@ -34,6 +33,7 @@ app.post("/api/register", async (req, res) => {
       data: {
         username: username,
         password: hash,
+        officeId: Number(officeId),
       },
     });
 
@@ -59,7 +59,8 @@ app.post("/api/login", async (req, res) => {
       const token = jwt.sign({ userId: user.id }, "1223", {
         expiresIn: "1h",
       });
-      res.json({ token });
+      const officeId = user.officeId;
+      res.json({ token, officeId });
     } else {
       res.sendStatus(403); // Incorrect password
     }

@@ -10,6 +10,7 @@ model office {
   id      Int       @id @default(autoincrement())
   name    String    @db.VarChar(255)
   department department[]
+  user user[]
   
 }
 
@@ -46,6 +47,8 @@ model user {
   id Int @id @default(autoincrement())
   username String @db.VarChar(50)
   password String @db.VarChar(255)
+  officeId Int?
+  office office? @relation(fields: [officeId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now()) @db.Timestamp(0)
   updatedAt    DateTime   @default(now()) @db.Timestamp(0)
 }
