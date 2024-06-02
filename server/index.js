@@ -296,17 +296,26 @@ app.get("/api/office/:id", async (req, res) => {
 
 app.post("/api/addDepartment", async (req, res) => {
   const { office, name, description } = req.body;
-  const department = await prisma.department.create({
-    data: {
-      name: name.toUpperCase(),
-      now_serving: "",
-      description: description.toUpperCase(),
-      officeId: Number(office),
+  const duplicateChecker = await prisma.department.findFirst({
+    where: {
+      name: name,
     },
   });
-  res.json({
-    message: `Added a new window: Window ${name} - Service: ${description} in ${office}`,
-  });
+  if (duplicateChecker) {
+    res.sendStatus(409);
+  } else {
+    const department = await prisma.department.create({
+      data: {
+        name: name.toUpperCase(),
+        now_serving: "",
+        description: description.toUpperCase(),
+        officeId: Number(office),
+      },
+    });
+    res.json({
+      message: `Added a new window: Window ${name} - Service: ${description} in ${office}`,
+    });
+  }
 });
 app.post("/api/editWindow", async (req, res) => {
   const { id, name, description } = req.body;
