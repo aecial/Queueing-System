@@ -293,6 +293,31 @@ app.get("/api/office/:id", async (req, res) => {
   });
   res.json({ office });
 });
+app.get("/api/users", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        officeId: {
+          not: null,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        officeId: true,
+        office: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+    res.json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "An error occurred while fetching users." });
+  }
+});
 
 app.post("/api/addDepartment", async (req, res) => {
   const { office, name, description } = req.body;
