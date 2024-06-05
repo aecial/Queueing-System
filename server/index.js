@@ -284,6 +284,15 @@ app.get("/api/offices", async (req, res) => {
   });
   res.json({ offices });
 });
+app.get("/api/officeNames", async (req, res) => {
+  const offices = await prisma.office.findMany({
+    select: {
+      id: true,
+      name: true,
+    },
+  });
+  res.json({ offices });
+});
 app.get("/api/office/:id", async (req, res) => {
   const id = Number(req.params.id);
   const office = await prisma.office.findFirst({

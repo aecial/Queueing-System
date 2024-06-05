@@ -37,7 +37,7 @@ const EmployeeManager = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password != confirmpassword) {
+    if (password !== confirmpassword) {
       setWarning(true);
       setPassword("");
       setConfirmPassword("");
@@ -82,6 +82,7 @@ const EmployeeManager = () => {
                     <EmployeeManagerRow
                       id={user.id}
                       username={user.username}
+                      officeId={user.officeId}
                       office={user.office.name}
                     />
                   );
@@ -93,7 +94,7 @@ const EmployeeManager = () => {
         <div className="divider lg:divider-horizontal"></div>
         <div className="flex w-[40%] justify-center items-center">
           {warning && (
-            <div role="alert" className="alert alert-warning mb-10 w-[40%]">
+            <div role="alert" className="alert alert-warning mb-10 w-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="stroke-current shrink-0 h-10 w-10"
@@ -127,7 +128,7 @@ const EmployeeManager = () => {
             </div>
           )}
           {success && (
-            <div role="alert" className="alert alert-success w-[40%] mb-10">
+            <div role="alert" className="alert alert-success w-full mb-10">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="stroke-current shrink-0 h-10 w-10"
