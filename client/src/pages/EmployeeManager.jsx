@@ -13,6 +13,18 @@ const EmployeeManager = () => {
   const [warning, setWarning] = useState(false);
   const [success, setSuccess] = useState(false);
   const [users, setUsers] = useState([]);
+  const updateUsersList = async () => {
+    setIsLoading(true);
+    try {
+      const userResponse = await fetch("/api/users");
+      const userApi = await userResponse.json();
+      setUsers(userApi);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const firstGetWin = async () => {
     setIsLoading(true);
     try {
@@ -84,6 +96,7 @@ const EmployeeManager = () => {
                       username={user.username}
                       officeId={user.officeId}
                       office={user.office.name}
+                      updateUsersList={updateUsersList}
                     />
                   );
                 })}

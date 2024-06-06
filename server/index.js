@@ -336,6 +336,7 @@ app.post("/api/addDepartment", async (req, res) => {
     },
   });
   if (duplicateChecker) {
+    console.log(duplicateChecker);
     res.sendStatus(409);
   } else {
     const department = await prisma.department.create({
@@ -381,6 +382,21 @@ app.post("/api/deleteWindow", async (req, res) => {
     });
 
     res.json({ message: `Successfully Deleted Window ${id}` });
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.post("/api/deleteUser", async (req, res) => {
+  const { id } = req.body;
+
+  try {
+    const user = await prisma.user.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    res.json({ message: `Successfully Deleted User ${id}: ${user.username}` });
   } catch (error) {
     console.log(error);
   }

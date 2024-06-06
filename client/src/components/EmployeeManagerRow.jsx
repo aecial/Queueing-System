@@ -1,8 +1,37 @@
 import { useState } from "react";
-const EmployeeManagerRow = ({ id, username, office, officeId }) => {
+const EmployeeManagerRow = ({
+  id,
+  username,
+  office,
+  officeId,
+  updateUsersList,
+}) => {
   const [currentOffice, setCurrentOffice] = useState(officeId);
   const [newPass, setNewPass] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
+  const handleDelete = async () => {
+    try {
+      const response = await fetch("/api/deleteUser", {
+        method: "POST", // Specify the HTTP method
+        headers: {
+          "Content-Type": "application/json", // Specify the content type of the request body
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      });
+
+      if (response.ok) {
+        updateUsersList();
+        document.getElementById(`delete_${id}`).close();
+      } else {
+        console.log("Emrror AAA");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <tr>
       <td>{username}</td>
@@ -136,7 +165,10 @@ const EmployeeManagerRow = ({ id, username, office, officeId }) => {
             <form method="dialog" className="flex gap-x-5">
               {/* if there is a button in form, it will close the modal */}
               <button className="btn">Close</button>
-              <button className="btn bg-red-500 text-white hover:text-red-500">
+              <button
+                className="btn bg-red-500 text-white hover:text-red-500"
+                onClick={handleDelete}
+              >
                 Delete
               </button>
             </form>

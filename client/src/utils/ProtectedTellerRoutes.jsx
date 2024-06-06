@@ -70,7 +70,7 @@ const ProtectedTellerRoutes = () => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   const isUserOfficeAuthorized = departments.some(

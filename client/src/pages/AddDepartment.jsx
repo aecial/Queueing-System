@@ -29,13 +29,20 @@ const AddDepartment = () => {
   }, []);
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(selectedOffice);
+    console.log(windowName);
+    console.log(windowDesc);
     try {
       const response = await fetch("/api/addDepartment", {
         method: "POST", // Specify the HTTP method
         headers: {
           "Content-Type": "application/json", // Specify the content type of the request body
         },
-        body: JSON.stringify({ selectedOffice, windowName, windowDesc }), // Convert the body data to JSON format
+        body: JSON.stringify({
+          office: selectedOffice,
+          name: windowName,
+          description: windowDesc,
+        }), // Convert the body data to JSON format
       });
 
       if (response.ok) {
@@ -45,6 +52,8 @@ const AddDepartment = () => {
         setWindowDesc("");
       } else if (response.status === 409) {
         setDuplicateWarning(true);
+      } else {
+        return;
       }
     } catch (error) {
       console.log(error);
