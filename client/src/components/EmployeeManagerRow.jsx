@@ -9,6 +9,7 @@ const EmployeeManagerRow = ({
   const [currentOffice, setCurrentOffice] = useState(officeId);
   const [newPass, setNewPass] = useState("");
   const [confirmNewPass, setConfirmNewPass] = useState("");
+  const [confirmTyping, setConfirmTyping] = useState(false);
   const handleDelete = async () => {
     try {
       const response = await fetch("/api/deleteUser", {
@@ -29,6 +30,58 @@ const EmployeeManagerRow = ({
       }
     } catch (error) {
       console.log(error);
+    }
+  };
+  const handleTransfer = async () => {
+    if (currentOffice === officeId) {
+      return;
+    } else {
+      try {
+        const response = await fetch("/api/transferOffice", {
+          method: "POST", // Specify the HTTP method
+          headers: {
+            "Content-Type": "application/json", // Specify the content type of the request body
+          },
+          body: JSON.stringify({
+            id,
+            office: currentOffice,
+          }),
+        });
+
+        if (response.ok) {
+          updateUsersList();
+        } else {
+          console.log("Emrror AAA");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+  const handleUpdatePassword = async () => {
+    if (newPass !== confirmNewPass) {
+      return;
+    } else {
+      try {
+        const response = await fetch("/api/updatePassword", {
+          method: "POST", // Specify the HTTP method
+          headers: {
+            "Content-Type": "application/json", // Specify the content type of the request body
+          },
+          body: JSON.stringify({
+            id,
+            password: newPass,
+          }),
+        });
+
+        if (response.ok) {
+          updateUsersList();
+        } else {
+          console.log("Emrror AAA");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
@@ -87,6 +140,7 @@ const EmployeeManagerRow = ({
               <button
                 className="btn btn-success"
                 disabled={officeId === currentOffice}
+                onClick={handleTransfer}
               >
                 Transfer Office
               </button>
@@ -145,12 +199,40 @@ const EmployeeManagerRow = ({
                 onChange={(e) => setConfirmNewPass(e.target.value)}
               />
             </label>
+            {newPass !== confirmNewPass && confirmTyping ? (
+              <div className="label">
+                <span className="label-text-alt text-red-500">
+                  Password Do Not Match
+                </span>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
           <div className="modal-action">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button className="btn">Close</button>
-            </form>
+            <div className="flex gap-x-5">
+              <button
+                className="btn"
+                onClick={() => {
+                  document.getElementById(`change_password_${id}`).close();
+                  setNewPass("");
+                  setConfirmNewPass("");
+                }}
+              >
+                Close
+              </button>
+              <button
+                disabled={
+                  newPass !== confirmNewPass ||
+                  newPass === "" ||
+                  confirmNewPass === ""
+                }
+                className="btn btn-success"
+                onClick={handleUpdatePassword}
+              >
+                Change Password
+              </button>
+            </div>
           </div>
         </div>
       </dialog>

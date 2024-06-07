@@ -14,7 +14,7 @@ const Logout = () => {
       // sessionStorage.removeItem('user');
 
       // Redirect the user to the login page
-      navigate("/");
+      navigate("/login");
     };
 
     // Call the logout function

@@ -401,6 +401,47 @@ app.post("/api/deleteUser", async (req, res) => {
     console.log(error);
   }
 });
+app.post("/api/transferOffice", async (req, res) => {
+  const { id, office } = req.body;
+
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        officeId: Number(office),
+      },
+    });
+
+    res.json({ message: `Transfer Office Complete` });
+  } catch (error) {
+    console.log(error);
+  }
+});
+app.post("/api/updatePassword", async (req, res) => {
+  const { id, password } = req.body;
+  try {
+    // Generate a salt
+    const salt = await bcrypt.genSalt(10);
+
+    // Hash the password with the salt
+    const hash = await bcrypt.hash(password, salt);
+    const user = await prisma.user.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        password: hash,
+      },
+    });
+    res.json({
+      message: `Updated Password of ${user.username}`,
+    });
+  } catch (error) {
+    res.sendStatus(500);
+  }
+});
 io.on("connection", (socket) => {
   console.log(`${socket.id} connected`);
   socket.on("join_room", (data) => {
