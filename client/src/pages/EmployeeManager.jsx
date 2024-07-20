@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import toast, { Toaster } from "react-hot-toast";
 import EmployeeManagerRow from "../components/EmployeeManagerRow";
 const EmployeeManager = () => {
+  const notify = () => toast.success("Added a New User");
+  const notifyWarning = () => toast.error("Passwords Do not Match");
   const navigate = useNavigate();
   const [offices, setOffices] = useState([]);
   const [officeId, setOfficeId] = useState(0);
@@ -50,7 +53,7 @@ const EmployeeManager = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmpassword) {
-      setWarning(true);
+      notifyWarning();
       setPassword("");
       setConfirmPassword("");
     } else {
@@ -63,7 +66,10 @@ const EmployeeManager = () => {
           body: JSON.stringify({ username, password, officeId }), // Convert the body data to JSON format
         });
         if (response.ok) {
-          setSuccess(true);
+          updateUsersList();
+          setTimeout(() => {
+            notify();
+          }, 1000);
         } else {
         }
       } catch (error) {
@@ -241,6 +247,31 @@ const EmployeeManager = () => {
               </button>
             </form>
           </label>
+          <Toaster
+            toastOptions={{
+              className: "w-[40%]",
+              success: {
+                position: "top-right",
+                style: {
+                  background: "green",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  fontSize: "1.5rem",
+                },
+              },
+              error: {
+                position: "top-right",
+                style: {
+                  background: "red",
+                  color: "white",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  fontSize: "1.5rem",
+                },
+              },
+            }}
+          />
         </div>
       </div>
     );

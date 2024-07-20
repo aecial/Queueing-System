@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Loader from "../components/Loader";
+import toast, { Toaster } from "react-hot-toast";
+
 const AddDepartment = () => {
+  const notify = () => toast.success("Added a New Window");
+  const notifyWarning = () => toast.error("Window Already Exists");
   const navigate = useNavigate();
   const [offices, setOffices] = useState([]);
   const [selectedOffice, setSelectedOffice] = useState("");
@@ -10,6 +14,7 @@ const AddDepartment = () => {
   const [success, setSuccess] = useState(false);
   const [duplicateWarning, setDuplicateWarning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
   const firstGetWin = async () => {
     setIsLoading(true);
     try {
@@ -27,6 +32,7 @@ const AddDepartment = () => {
   useEffect(() => {
     firstGetWin();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(selectedOffice);
@@ -34,24 +40,25 @@ const AddDepartment = () => {
     console.log(windowDesc);
     try {
       const response = await fetch("/api/addDepartment", {
-        method: "POST", // Specify the HTTP method
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", // Specify the content type of the request body
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           office: selectedOffice,
           name: windowName,
           description: windowDesc,
-        }), // Convert the body data to JSON format
+        }),
       });
 
       if (response.ok) {
-        setSuccess(true);
+        notify();
         setSelectedOffice("");
         setWindowName("");
         setWindowDesc("");
       } else if (response.status === 409) {
-        setDuplicateWarning(true);
+        notifyWarning();
+        return;
       } else {
         return;
       }
@@ -59,6 +66,7 @@ const AddDepartment = () => {
       console.log(error);
     }
   };
+
   if (sessionStorage.getItem("token") && isLoading === false) {
     return (
       <div className="text-white min-w-screen min-h-screen flex flex-col justify-center items-center text-4xl">
@@ -157,6 +165,31 @@ const AddDepartment = () => {
             </button>
           </form>
         </label>
+        <Toaster
+          toastOptions={{
+            className: "w-[40%]",
+            success: {
+              position: "top-right",
+              style: {
+                background: "green",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                fontSize: "1.5rem",
+              },
+            },
+            error: {
+              position: "top-right",
+              style: {
+                background: "red",
+                color: "white",
+                padding: "8px 16px",
+                borderRadius: "4px",
+                fontSize: "1.5rem",
+              },
+            },
+          }}
+        />
       </div>
     );
   } else {
