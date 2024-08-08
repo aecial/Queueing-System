@@ -121,7 +121,7 @@ const Kiosk = () => {
   return (
     <div className="bg-slate-200 text-white min-h-screen w-screen overflow-hidden flex flex-col  items-center p-5">
       <div className="avatar flex flex-col gap-10">
-        <div className="absolute left-[-630px] w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
+        <div className="absolute left-[-550px] z-[1] w-60 mx-auto rounded-full ring ring-warning ring-offset-base-100 ring-offset-2">
           <img src="/OIP.jpeg" alt="LGU-LOGO" />
         </div>
         <h1 className="text-4xl text-black font-bold">
@@ -193,7 +193,7 @@ const Kiosk = () => {
       {loadingResponse ? (
         <SmallLoader />
       ) : (
-        <div className="w-screen flex flex-col items-center gap-3">
+        <div className="w-screen flex flex-col items-center gap-3 z-10">
           {selectedOffice ? (
             <div className="text-black pt-5">
               {loadingWindows ? (
@@ -236,7 +236,7 @@ const Kiosk = () => {
               ) : (
                 <>
                   <h1 className="text-3xl text-center mb-10">SELECT OFFICE:</h1>
-                  <div className="grid grid-cols-3 gap-10">
+                  <div className="grid grid-cols-3 gap-10 z-10">
                     {departments.map((info) => {
                       return (
                         <button
